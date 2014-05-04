@@ -1,6 +1,6 @@
 var socket = io.connect();
 
-function addToSet(filepath, setNum){
+function addToSet(filepath, setNum, progressBar){
 	var block = $("#imagesets #"+setNum+" .block");
 	if (block.css("height")=="60px"){
 		block.css("height","120px");
@@ -19,16 +19,18 @@ function addToSet(filepath, setNum){
 	var img = $("#imagesets #"+setNum+" ul li:first-child img");
 
 	var width = img.css("width");
+	progressBar.width = parseInt(width, 10);
 	jhover.css("width",width);
 
+	img.after(progressBar.bar);
 	img.after(jhover);
-
+	progressBar.bar.css("display", "block");
 	img.hover( function() {
 		$(this).next().css("display","block");
 	}, function() {
 		$(this).next().css("display","none");
 	});
-
+	
 	jhover.hover( function() {
 		$(this).css("display","block");
 	}, function() {
@@ -42,20 +44,31 @@ function addToSet(filepath, setNum){
 
 }
 
+function progressBar(obj)
+{
+	this.bar = $("<div class='progressBar'><div></div></div>");
+	var padding = 5;
+    this.setProgress = function(progress)
+    {       
+    	console.log(this.width);
+        var progressBarWidth =progress*this.width/ 100;  
+        this.bar.find('div').animate({ width: progressBarWidth }, 10).html("");
+    }
+}
+	
 
 function sendFile(files, obj, setNum) {
-	console.log(setNum);
 	for (var i=0; i < files.length; i++) {
 		var fd = new FormData();
 		fd.append('file', files[i]);
 		console.log(files[i]);
+		var status = new progressBar(obj);
 		var reader = new FileReader(); // instance of the FileReader
        		reader.readAsDataURL(files[i]); // read the local file
  		reader.onloadend = function(){ 
-               		addToSet(this.result, setNum);
+               		addToSet(this.result, setNum, status);
         	}
 
-		var status = "";
 		fd.append('setNum', setNum);
 		uploadFile(fd, status, setNum);
 		
@@ -81,7 +94,7 @@ function uploadFile(formData, status, setNumber) {
 					if (event.lengthComputable) {
 						percent = Math.ceil(position / total*100);
 					}
-				//	status.setProgress(percent);
+					status.setProgress(percent);
 				}, false);
 			}
 			return xhrobj;

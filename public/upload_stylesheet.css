@@ -131,3 +131,16 @@
 	font-size: 12px;
 	padding-top: 6px;
 }
+
+.progressBar {
+	background-color: blue;
+	height: 10px;
+	border: 1px solid red;
+	border-radius = 2px;
+
+}
+.progressBar div {
+	background-color: green;
+	height: 100%;
+	width: 0;
+}
