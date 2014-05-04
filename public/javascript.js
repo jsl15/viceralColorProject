@@ -115,35 +115,8 @@ function rgb2hex(rgb) {
     }
     return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
 }
-
-$(document).ready(function() {
-
-	// JavaScript Document
-
-	var drag_color = $("#color2").css("backgroundColor");
-	var drag_box = $("#color2");
-	var box = $("#box_text");
-	
-	$("#drop_down_img").slideDown("slow",function(){
-		$("#drop_down_text").fadeIn("slow");
-		$("#setColors").fadeIn("slow");
-	});
-
-	createSets();
-
-
-	$(".color").draggable( {			  
-	  revert : true, 
-	  	drag : function(event, ui) {
-	  		drag_color = $(this).css("backgroundColor");
-	  		drag_box = $(this);
-	  	}
-	});
-	$(".box").droppable({
-		
-		drop:function(event,ui){
-			$(this).css("backgroundColor",drag_color);
-		<!-- web
+function changeColor(){
+		<!-- Web
 			<!-- background1
 			$("#fake_web_body").css("backgroundColor",$("#box_background1").css("backgroundColor"));
 			$("#B_web").css("color",$("#box_background1").css("backgroundColor"));
@@ -215,6 +188,40 @@ $(document).ready(function() {
 			<!-- background2
 			$("#top").css("backgroundColor",$("#box_background2").css("backgroundColor"));
 			$("#B").css("backgroundColor",$("#box_background2").css("backgroundColor"));
+}
+
+$(document).ready(function() {
+
+	// JavaScript Document
+	$("#box_background1").css("backgroundColor",$("#color4").css("backgroundColor"));
+	$("#box_background2").css("backgroundColor",$("#color3").css("backgroundColor"));
+	$("#box_text").css("backgroundColor",$("#color2").css("backgroundColor"));
+	$("#box_accent").css("backgroundColor",$("#color1").css("backgroundColor"));
+	
+	var drag_color = $("#color2").css("backgroundColor");
+	var drag_box = $("#color2");
+	var box = $("#box_text");
+	
+	$("#drop_down_img").slideDown("slow",function(){
+		$("#drop_down_text").fadeIn("slow");
+		$("#setColors").fadeIn("slow");
+	});
+
+	createSets();
+
+
+	$(".color").draggable( {			  
+	  revert : true, 
+	  	drag : function(event, ui) {
+	  		drag_color = $(this).css("backgroundColor");
+	  		drag_box = $(this);
+	  	}
+	});
+	$(".box").droppable({
+		
+		drop:function(event,ui){
+			$(this).css("backgroundColor",drag_color);
+			changeColor();
 		} 
 	});
 	
@@ -337,5 +344,11 @@ $(document).ready(function() {
 		}
 	});
 	
-	
+	$("#list_numbers li").click(function(){
+		$("#box_background1").css("backgroundColor",$("#color4").css("backgroundColor"));
+		$("#box_background2").css("backgroundColor",$("#color3").css("backgroundColor"));
+		$("#box_text").css("backgroundColor",$("#color2").css("backgroundColor"));
+		$("#box_accent").css("backgroundColor",$("#color1").css("backgroundColor"));
+		changeColor();
+	});
 });

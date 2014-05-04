@@ -1,3 +1,5 @@
+var socket = io.connect();
+
 function addToSet(filepath, setNum){
 	var block = $("#imagesets #"+setNum+" .block");
 	if (block.css("height")=="60px"){
@@ -48,15 +50,21 @@ function sendFile(files, obj, setNum) {
 		fd.append('file', files[i]);
 		console.log(files[i]);
 		var reader = new FileReader(); // instance of the FileReader
-        reader.readAsDataURL(files[i]); // read the local file
- 
-        reader.onloadend = function(){ 
-                addToSet(this.result, setNum);
-        }
+       		reader.readAsDataURL(files[i]); // read the local file
+ 		reader.onloadend = function(){ 
+               		addToSet(this.result, setNum);
+        	}
 
 		var status = "";
 		fd.append('setNum', setNum);
 		uploadFile(fd, status, setNum);
+		
+		
+	/*	//upload a single file
+		console.log('emitting');
+		socket.emit('upload', fd, status);
+		//problems with the progress bar
+		uploadFile(fd, status);*/
 	}
 }
 
