@@ -140,7 +140,7 @@
 	top: 170px;
 }
 
-#commentBlocks #a, #commentBlocks #c, #commentBlocks #e, #commentBlocks #b,#commentBlocks #d{
+.commentBlock{
 	position: absolute;
 	top: 0px;
 	height: 40px;
@@ -151,7 +151,6 @@
 #commentBlocks #c{
 	top: 82px;
 }
-
 #commentBlocks #e{
 	top: 164px;
 }
@@ -275,14 +274,14 @@
 	padding-top: 20px;
 	top:156px;
 }
-#box_text{
+#box_text3{
 	height:80px;
 	background-color:rgb(0,0,0);
 
 	line-height: 80px;
 	top:271px;
 }
-#box_accent{
+#box_accent4{
 	height:80px;
 	background-color:rgb(197, 96, 54);
 
