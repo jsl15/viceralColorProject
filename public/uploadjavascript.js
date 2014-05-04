@@ -3,13 +3,15 @@ function sendFile(files, obj, setNum) {
 	for (var i=0; i < files.length; i++) {
 		var fd = new FormData();
 		fd.append('file', files[i]);
+		console.log(files[i]);
 		//progress bar stuff
 		var status = "";
-		uploadFile(fd, status);
+		fd.append('setNum', setNum);
+		uploadFile(fd, status, setNum);
 	}
 }
 
-function uploadFile(formData, status) {
+function uploadFile(formData, status, setNumber) {
 	var url = "http://localhost:8080/upload";
 	var req = $.ajax({
 		xhr: function() {

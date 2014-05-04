@@ -1,5 +1,6 @@
 var express = require('express');
 var app = express();
+app.enable('trust proxy');
 var fs = require('fs');
 //var server = http.createServer(app);
 //var io = require('socket.io').listen(server);
@@ -49,7 +50,11 @@ app.get('/mobile.html', function(request, response) {
 
 app.post('/upload', function(req, res) {
 	var obj = {};
-	console.log("request" + req);
+	var setNumber = req.body.setNum;
+ //	console.log(req);
+	console.log(req.connection.remoteAddress);
+	console.log(req.socket.remoteAddress);
+	console.log(req.headers['x-forwarded-for']);
 	var extensions={".png":true, ".jpg":true, ".gif":true};
 	var maxFileSize = 500000;
 	var fileName = req.files.file.name;
