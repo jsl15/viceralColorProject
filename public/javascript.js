@@ -115,92 +115,97 @@ function rgb2hex(rgb) {
     }
     return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
 }
-function changeColor(){
-		<!-- Web
-			<!-- background1
-			$("#fake_web_body").css("backgroundColor",$("#box_background1").css("backgroundColor"));
-			$("#B_web").css("color",$("#box_background1").css("backgroundColor"));
-			<!-- text
-			$("#fake_web_text").css("color",$("#box_text").css("backgroundColor"));
-			$("#username_web").css("color",$("#box_text").css("backgroundColor"));
-			$("#inner_box").css("color",$("#box_text").css("backgroundColor"));
-			$("#web_top").css("color",$("#box_text").css("backgroundColor"));
-			$("#fake_nav a").css("color",$("#box_text").css("backgroundColor"));
-			<!--outlines
+function changeColor(id){
+	var box = id.charAt(id.length-1);
+	var color;
+	if (box == "1"){
+		var color = $("#box_background1").css("backgroundColor");
+		$("#fake_web_body").css("backgroundColor",color);
+		$("#B_web").css("color",color);
 
-			<!-- accent
-			$("#fake_nav").css("backgroundColor",$("#box_accent").css("backgroundColor"));
-			$("#B_web").css({"border-color":$("#box_accent").css("backgroundColor"),
+		//mobile
+		$("#innerPhone").css("backgroundColor",color);
+		$("#B").css("color",color);
+	}
+	else if (box == "2"){
+		var color = $("#box_background2").css("backgroundColor");
+		$("#inner_web").css("backgroundColor",color);
+		$("#B_web").css("backgroundColor",color);
+		$("#inner_box").css("backgroundColor",color);
+
+		//mobile
+		$("#top").css("backgroundColor",color);
+		$("#B").css("backgroundColor",color);
+	}
+	else if (box == "3"){
+		var color = $("#box_text3").css("backgroundColor");
+		$("#fake_web_text").css("color",color);
+		$("#username_web").css("color",color);
+		$("#inner_box").css("color",color);
+		$("#web_top").css("color",color);
+		var split = color.split("(");
+		split = split[0]+"a("+split[1];
+	    split = split.split(")");
+	    split = split[0]+",0.7)";
+		$("#fake_nav a").css("color",split);
+		$("#fake_nav a").hover( function() {
+			$(this).css("color",color);
+		}, function(){
+			$(this).css("color",split);
+			$("#fake_nav .active").css("color",color);
+		});
+		$("#fake_nav .active").css("color",color);
+
+		//mobile
+		$("#phoneText").css("color",color);	
+		$(".username").css("color",color);
+		$(".comment").css("color",color);
+		$(".points").css("color",color);
+	}
+	else {
+		var color = $("#box_accent4").css("backgroundColor");
+		$("#fake_nav").css("backgroundColor",color);
+		$("#B_web").css({"border-color":color,
 							"border-weight":"2px",
 							"border-style":"solid",
 							"border-radius":"10px"});
-			$("#inner_box").css({"border-color":$("#box_accent").css("backgroundColor"),
+		$("#inner_box").css({"border-color":color,
 							"border-weight":"2px",
 							"border-style":"solid",
 							"border-radius":"10px"});
-			<!-- background2
-			$("#inner_web").css("backgroundColor",$("#box_background2").css("backgroundColor"));
-			$("#B_web").css("backgroundColor",$("#box_background2").css("backgroundColor"));
-			$("#inner_box").css("backgroundColor",$("#box_background2").css("backgroundColor"));
-			
-		<!-- Mobile
-			<!-- background1
-			$("#innerPhone").css("backgroundColor",$("#box_background1").css("backgroundColor"));
-			$("#B").css("color",$("#box_background1").css("backgroundColor"));
-			<!-- text
-			$("#phoneText").css("color",$("#box_text").css("backgroundColor"));	
-			$(".username").css("color",$("#box_text").css("backgroundColor"));
-			$(".comment").css("color",$("#box_text").css("backgroundColor"));
-			$(".points").css("color",$("#box_text").css("backgroundColor"));
-			<!-- accent
-			$("#top").css("color",$("#box_accent").css("backgroundColor"));
-			$("#navButton").css({"border-color":$("#box_accent").css("backgroundColor"),
+
+		//mobile
+		$("#top").css("color",color);
+		$("#navButton").css({"border-color":color,
 							"border-weight":"2px",
 							"border-style":"solid",
 							"border-radius":"10px"});
-			$("#a").css("backgroundColor",$("#box_accent").css("backgroundColor"));
-			$("#b").css("backgroundColor",$("#box_accent").css("backgroundColor"));
-			$("#c").css("backgroundColor",$("#box_accent").css("backgroundColor"));
-			$("#B").css({"border-color":$("#box_accent").css("backgroundColor"),
+		$("#B").css({"border-color":color,
 							"border-weight":"2px",
 							"border-style":"solid",
 							"border-radius":"10px"});
-			$("#commentBlocks #a").css({"border-color":$("#box_accent").css("backgroundColor"),
+		$("#navButton div").css("backgroundColor",color);
+		$(".commentBlock").css({"border-color":color,
 							"border-weight":"1px",
-							"border-style":"solid"
-							});
-			$("#commentBlocks #b").css({"border-color":$("#box_accent").css("backgroundColor"),
-							"border-weight":"1px",
-							"border-style":"solid"
-							});
-			$("#commentBlocks #c").css({"border-color":$("#box_accent").css("backgroundColor"),
-							"border-weight":"1px",
-							"border-style":"solid"
-							});
-			$("#commentBlocks #d").css({"border-color":$("#box_accent").css("backgroundColor"),
-							"border-weight":"1px",
-							"border-style":"solid"
-							});
-			$("#commentBlocks #e").css({"border-color":$("#box_accent").css("backgroundColor"),
-							"border-weight":"1px",
-							"border-style":"solid"
-							});
-			<!-- background2
-			$("#top").css("backgroundColor",$("#box_background2").css("backgroundColor"));
-			$("#B").css("backgroundColor",$("#box_background2").css("backgroundColor"));
+							"border-style":"solid"});
+	}
 }
 
 $(document).ready(function() {
 
 	// JavaScript Document
-	$("#box_background1").css("backgroundColor",$("#color4").css("backgroundColor"));
-	$("#box_background2").css("backgroundColor",$("#color3").css("backgroundColor"));
-	$("#box_text").css("backgroundColor",$("#color2").css("backgroundColor"));
-	$("#box_accent").css("backgroundColor",$("#color1").css("backgroundColor"));
+	$("#box_background1").css("backgroundColor",$("#color1").css("backgroundColor"));
+	$("#box_background2").css("backgroundColor",$("#color2").css("backgroundColor"));
+	$("#box_text3").css("backgroundColor",$("#color3").css("backgroundColor"));
+	$("#box_accent4").css("backgroundColor",$("#color4").css("backgroundColor"));
+	changeColor("#box_background1");
+	changeColor("#box_background2");
+	changeColor("#box_text3");
+	changeColor("#box_accent4");
 	
 	var drag_color = $("#color2").css("backgroundColor");
 	var drag_box = $("#color2");
-	var box = $("#box_text");
+	var box = $("#box_text3");
 	
 	$("#drop_down_img").slideDown("slow",function(){
 		$("#drop_down_text").fadeIn("slow");
@@ -221,7 +226,7 @@ $(document).ready(function() {
 		
 		drop:function(event,ui){
 			$(this).css("backgroundColor",drag_color);
-			changeColor();
+			changeColor($(this).attr("id"));
 		} 
 	});
 	
@@ -265,11 +270,15 @@ $(document).ready(function() {
 		}
 	});
 	
-	$("#color4").hover(function() {
-		var color = $("#color4").css("backgroundColor");
+	$(".color").hover(function() {
+		var color = $(this).css("backgroundColor");
 		var colorhex = rgb2hex(color);
-		$("#color_id1").append("<div id='colors'></div>"); 
-		$("#color_id1_rgb").append("<div id='colors_rgb'></div>"); 
+
+		var id = $(this).attr("id");
+		console.log(id[5]);
+
+		$("#color_id"+id[5]).append("<div id='colors'></div>"); 
+		$("#color_id"+id[5]+"_rgb").append("<div id='colors_rgb'></div>"); 
 		colors.innerHTML += colorhex;
 		colors_rgb.innerHTML += color;
 		$("#colors").css("color",color);
@@ -277,48 +286,6 @@ $(document).ready(function() {
 		},
 		function(){
 	 	 	colors.remove();
-			colors_rgb.remove();
-	});
-		$("#color3").hover(function() {
-		var color = $("#color3").css("backgroundColor");
-		var colorhex = rgb2hex(color);
-		$("#color_id2").append("<div id='colors'></div>"); 
-		$("#color_id2_rgb").append("<div id='colors_rgb'></div>"); 
-		colors.innerHTML += colorhex;
-		colors_rgb.innerHTML += color;
-		$("#colors").css("color",color);
-		$("#colors_rgb").css("color",color);
-		},
-		function(){
-	 	 	colors.remove();
-			colors_rgb.remove();
-	});
-	$("#color2").hover(function() {
-		var color = $("#color2").css("backgroundColor");
-		var colorhex = rgb2hex(color);
-		$("#color_id3").append("<div id='colors'></div>"); 
-		$("#color_id3_rgb").append("<div id='colors_rgb'></div>"); 
-		colors.innerHTML += colorhex;
-		colors_rgb.innerHTML += color;
-		$("#colors").css("color",color);
-		$("#colors_rgb").css("color",color);
-		},
-		function(){
-	 	 	colors.remove();
-			colors_rgb.remove();
-	});
-	$("#color1").hover(function() {
-		var color = $("#color1").css("backgroundColor");
-		var colorhex = rgb2hex(color);
-		$("#color_id4").append("<div id='colors'></div>"); 
-		$("#color_id4_rgb").append("<div id='colors_rgb'></div>"); 
-		colors.innerHTML += colorhex;
-		colors_rgb.innerHTML += color;
-		$("#colors").css("color",color);
-		$("#colors_rgb").css("color",color);
-	},
-		function(){
-	 		colors.remove();
 			colors_rgb.remove();
 	});
 
@@ -347,8 +314,8 @@ $(document).ready(function() {
 	$("#list_numbers li").click(function(){
 		$("#box_background1").css("backgroundColor",$("#color4").css("backgroundColor"));
 		$("#box_background2").css("backgroundColor",$("#color3").css("backgroundColor"));
-		$("#box_text").css("backgroundColor",$("#color2").css("backgroundColor"));
-		$("#box_accent").css("backgroundColor",$("#color1").css("backgroundColor"));
+		$("#box_text3").css("backgroundColor",$("#color2").css("backgroundColor"));
+		$("#box_accent4").css("backgroundColor",$("#color1").css("backgroundColor"));
 		changeColor();
 	});
 });
