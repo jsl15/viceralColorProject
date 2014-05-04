@@ -1,10 +1,10 @@
 <!-- TO DO:
   1. Find out why Minas won't work on google chrome
-  2. Scrolling with z-index - problem?
-  3. Make droppable work
-  4. Maybe make expand pullout 
-  5. color hex color hovering 
-  6. Dealing with this "set K" concept-->
+  2. Make droppable work
+  3. Browse button
+  4. Being able to delete uploaded images
+  5. Dealing with this "set K" concept
+  -->
 
 <!DOCTYPE html> 
 <html>
@@ -34,14 +34,14 @@
     <div id="drop_down">
             <img id="drop_down_img" src="/public/images/drop_down.png" alt:"some text"></img>
             <div id ="setColors">
-              <div id="colorline"></div>
+                  <div id="colorline"></div>
                   <div id="color1" class="color"></div>
                   <div id="color2" class="color"></div>
                   <div id="color3" class="color"></div>
                   <div id="color4" class="color"></div>
                   
                   <div id="color_ids">
-      				<div id="color_id1"></div>
+      				      <div id="color_id1"></div>
                     <div id="color_id1_rgb"></div>
                     <div id="color_id2"></div>
                     <div id="color_id2_rgb"></div>
@@ -49,7 +49,7 @@
                     <div id="color_id3_rgb"></div>
                     <div id="color_id4"></div>
                     <div id="color_id4_rgb"></div>
-      			  </div>    
+      			      </div>    
             </div>
             <div id="drop_down_text">
                 Drag and drop colors to make your ideal website!
@@ -70,12 +70,13 @@
       </div> 
     </div> 
 
-      <div id="chosenColors_web">
-      <div id="container1" class="slice"><div id ="slice1" class="slice"></div></div>
-      <div id="container2" class="slice"><div id="slice2" class="slice"></div></div>
-      <div id="container3" class="slice"><div id="slice3" class="slice"></div></div>
-      <div id="container4" class="slice"><div id="slice4" class="slice"></div></div>
-    </div>
+    	<div id ="boxes">
+        	<div id="colorline2"></div>
+      		<div id ="box_background1" class="box">Primary Background</div>
+      		<div id ="box_background2"  class="box">Secondary Background</div>
+      		<div id ="box_text"  class="box">Text</div>
+      		<div id ="box_accent"  class="box">Accent</div>
+    	</div>
     <div id="web_prototype">
 
       <div id="inner_web">
@@ -104,7 +105,10 @@
     </div>
 
     <img id="web_app_background" src="/public/images/computer-laptop.png" width="800px" height="800px"></img>  
-                
+
+    <div id="triangle-left"></div>
+    <div id="triangle-right"></div>
+
     <div id="expand"></div> 
     <div id="setImages"></div>        
 </body>

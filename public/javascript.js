@@ -50,6 +50,10 @@ function downsizeImage(){
 	$("#setImages .active").css("max-height","90px");
 	$("#setImages .active").css("width","150px");
 	$("#setImages .active").css("z-index","0");
+	if ($("#setImages .active").hasClass("web")){
+		$("#setImages .active").removeClass("web");
+		$("#setImages .active").css("margin-left", "25px");
+	}
 	$("#setImages .active").removeClass("active");
 	$("#expand").css("display","none");
 }
@@ -57,11 +61,51 @@ function downsizeImage(){
 function webUpsizeImage(){
 	$("#setImages .active").css("max-height","190px");
 	$("#setImages .active").css("width","190px");
+	$("#setImages .active").css("margin-left","0px");
+	$("#setImages .active").addClass("web");
 }
 
 function mobileUpsizeImage(){
 	$("#setImages .active").css("max-height","305px");
 	$("#setImages .active").css("width","305px");
+}
+
+function mobileShrink(){
+	$("#setImages").animate({
+			left: "355px",
+			"padding-right": "10px",
+			width: "0px"
+		}, "slow", function() {
+			$("#triangle-left").fadeIn("slow");
+	});
+}
+
+function mobileExpand(){
+	$("#setImages").animate({
+			left: "30px",
+			"padding-right": "20px",
+			width: "315px"
+		}, "slow", function() {
+			$("#triangle-right").fadeIn("slow");
+	});
+}
+
+function webShrink(){
+	$("#setImages").animate({
+			left: "378px",
+			width: "0px"
+		}, "slow", function() {
+			$("#triangle-left").fadeIn("slow");
+	});
+}
+
+function webExpand(){
+	$("#setImages").animate({
+			left: "188px",
+			width: "190px"
+		}, "slow", function() {
+			$("#triangle-right").fadeIn("slow");
+	});
 }
 
 function rgb2hex(rgb) {
@@ -74,6 +118,12 @@ function rgb2hex(rgb) {
 
 $(document).ready(function() {
 
+	// JavaScript Document
+
+	var drag_color = $("#color2").css("backgroundColor");
+	var drag_box = $("#color2");
+	var box = $("#box_text");
+	
 	$("#drop_down_img").slideDown("slow",function(){
 		$("#drop_down_text").fadeIn("slow");
 		$("#setColors").fadeIn("slow");
@@ -82,16 +132,92 @@ $(document).ready(function() {
 	createSets();
 
 
-	$(".color").draggable( {
-        revert : function(event, ui) {
-        	$(this).data("ui-draggable").originalPosition = {
-                top : 15,
-                left : 200 - (50*$(this).attr("id")[5])
-            };
-            return !event;
-		}
+	$(".color").draggable( {			  
+	  revert : true, 
+	  	drag : function(event, ui) {
+	  		drag_color = $(this).css("backgroundColor");
+	  		drag_box = $(this);
+	  	}
 	});
+	$(".box").droppable({
+		
+		drop:function(event,ui){
+			$(this).css("backgroundColor",drag_color);
+		<!-- web
+			<!-- background1
+			$("#fake_web_body").css("backgroundColor",$("#box_background1").css("backgroundColor"));
+			$("#B_web").css("color",$("#box_background1").css("backgroundColor"));
+			<!-- text
+			$("#fake_web_text").css("color",$("#box_text").css("backgroundColor"));
+			$("#username_web").css("color",$("#box_text").css("backgroundColor"));
+			$("#inner_box").css("color",$("#box_text").css("backgroundColor"));
+			$("#web_top").css("color",$("#box_text").css("backgroundColor"));
+			$("#fake_nav a").css("color",$("#box_text").css("backgroundColor"));
+			<!--outlines
 
+			<!-- accent
+			$("#fake_nav").css("backgroundColor",$("#box_accent").css("backgroundColor"));
+			$("#B_web").css({"border-color":$("#box_accent").css("backgroundColor"),
+							"border-weight":"2px",
+							"border-style":"solid",
+							"border-radius":"10px"});
+			$("#inner_box").css({"border-color":$("#box_accent").css("backgroundColor"),
+							"border-weight":"2px",
+							"border-style":"solid",
+							"border-radius":"10px"});
+			<!-- background2
+			$("#inner_web").css("backgroundColor",$("#box_background2").css("backgroundColor"));
+			$("#B_web").css("backgroundColor",$("#box_background2").css("backgroundColor"));
+			$("#inner_box").css("backgroundColor",$("#box_background2").css("backgroundColor"));
+			
+		<!-- Mobile
+			<!-- background1
+			$("#innerPhone").css("backgroundColor",$("#box_background1").css("backgroundColor"));
+			$("#B").css("color",$("#box_background1").css("backgroundColor"));
+			<!-- text
+			$("#phoneText").css("color",$("#box_text").css("backgroundColor"));	
+			$(".username").css("color",$("#box_text").css("backgroundColor"));
+			$(".comment").css("color",$("#box_text").css("backgroundColor"));
+			$(".points").css("color",$("#box_text").css("backgroundColor"));
+			<!-- accent
+			$("#top").css("color",$("#box_accent").css("backgroundColor"));
+			$("#navButton").css({"border-color":$("#box_accent").css("backgroundColor"),
+							"border-weight":"2px",
+							"border-style":"solid",
+							"border-radius":"10px"});
+			$("#a").css("backgroundColor",$("#box_accent").css("backgroundColor"));
+			$("#b").css("backgroundColor",$("#box_accent").css("backgroundColor"));
+			$("#c").css("backgroundColor",$("#box_accent").css("backgroundColor"));
+			$("#B").css({"border-color":$("#box_accent").css("backgroundColor"),
+							"border-weight":"2px",
+							"border-style":"solid",
+							"border-radius":"10px"});
+			$("#commentBlocks #a").css({"border-color":$("#box_accent").css("backgroundColor"),
+							"border-weight":"1px",
+							"border-style":"solid"
+							});
+			$("#commentBlocks #b").css({"border-color":$("#box_accent").css("backgroundColor"),
+							"border-weight":"1px",
+							"border-style":"solid"
+							});
+			$("#commentBlocks #c").css({"border-color":$("#box_accent").css("backgroundColor"),
+							"border-weight":"1px",
+							"border-style":"solid"
+							});
+			$("#commentBlocks #d").css({"border-color":$("#box_accent").css("backgroundColor"),
+							"border-weight":"1px",
+							"border-style":"solid"
+							});
+			$("#commentBlocks #e").css({"border-color":$("#box_accent").css("backgroundColor"),
+							"border-weight":"1px",
+							"border-style":"solid"
+							});
+			<!-- background2
+			$("#top").css("backgroundColor",$("#box_background2").css("backgroundColor"));
+			$("#B").css("backgroundColor",$("#box_background2").css("backgroundColor"));
+		} 
+	});
+	
 	$("#set_numbers li").click( function() {
 		if (!$(this).hasClass("active")){
 
@@ -189,4 +315,27 @@ $(document).ready(function() {
 			colors_rgb.remove();
 	});
 
+	$("#triangle-right").click(function(){
+		$(this).css("display","none");
+		$("#setImages img").css("display","none");
+		if ($(this).css("left")=="35px"){
+			mobileShrink();
+		}
+		else{
+			webShrink();
+		}
+	});
+
+	$("#triangle-left").click(function(){
+		$(this).css("display","none");
+		$("#setImages img").css("display","inline");
+		if ($(this).css("left")=="360px"){
+			mobileExpand();
+		}
+		else{
+			webExpand();
+		}
+	});
+	
+	
 });
