@@ -59,12 +59,21 @@ app.get('/mobile.html', function(request, response) {
 
 
 io.sockets.on('connection', function(socket) {
-	console.log('in server: connected');
+	console.log('in server: connected' + socket.id);
+	socket.emit('connectionID', socket.id);
 	socket.on('upload', function(fd, status) {
 	
 		console.log('in server: upload');
 	
 	});
+	socket.on('delete', function (imageID) {
+	//delete the image from the database and tmp folder.
+	console.log("woo deleting " + imageID);
+	});
+	socket.on('disconnect', function() {
+
+	});
+
 });
 
 
@@ -96,7 +105,7 @@ app.post('/upload', function(req, res) {
 					throw err;
 			});
 		});
-		result = "File upload succeeded";
+		result = fileID;
 	} else {
 		fs.unlink(tmpPath, function(err) {
 			if (err) throw err;

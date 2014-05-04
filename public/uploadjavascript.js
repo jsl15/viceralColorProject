@@ -1,4 +1,5 @@
 var socket = io.connect();
+var connectionID;
 
 function addToSet(filepath, setNum, progressBar){
 	var block = $("#imagesets #"+setNum+" .block");
@@ -40,8 +41,16 @@ function addToSet(filepath, setNum, progressBar){
 	var del = jhover.children();
 	del.click ( function() {
 		img.parent().remove();
+		console.log(del.id);
+		deleteImage(del.id);
 	});
 
+	return del;
+
+}
+
+function deleteImage(imageID) {
+	socket.emit('delete', imageID);
 }
 
 function progressBar(obj)
@@ -64,15 +73,14 @@ function sendFile(files, obj, setNum) {
 		console.log(files[i]);
 		var status = new progressBar(obj);
 		var reader = new FileReader(); // instance of the FileReader
-       		reader.readAsDataURL(files[i]); // read the local file
+       	reader.readAsDataURL(files[i]); // read the local file
  		reader.onloadend = function(){ 
-               		addToSet(this.result, setNum, status);
-        	}
+           	var d  = addToSet(this.result, setNum, status);
+			fd.append('setNum', setNum);
+			fd.append('connectionID', connectionID);
+			uploadFile(fd, status, setNum, d);
+        }
 
-		fd.append('setNum', setNum);
-		uploadFile(fd, status, setNum);
-		
-		
 	/*	//upload a single file
 		console.log('emitting');
 		socket.emit('upload', fd, status);
@@ -81,7 +89,7 @@ function sendFile(files, obj, setNum) {
 	}
 }
 
-function uploadFile(formData, status, setNumber) {
+function uploadFile(formData, status, setNumber, d) {
 	var url = "http://localhost:8080/upload";
 	var req = $.ajax({
 		xhr: function() {
@@ -107,7 +115,8 @@ function uploadFile(formData, status, setNumber) {
 		data: formData,
 		success: function (data) {
 			//status.setProgress(100);
-			console.log("uploaded!");
+			d.id = data;
+			console.log(d.id);
 		}
 	});
 	
@@ -116,6 +125,10 @@ function uploadFile(formData, status, setNumber) {
 
 $(document).ready(function() {
 
+	socket.on('connectionID', function(id) {
+		connectionID = id;
+	}
+		
 	var setCounter = 1;
 
 	$("#drop_down_img").slideDown("slow",function(){
