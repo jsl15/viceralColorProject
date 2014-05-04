@@ -6,7 +6,7 @@ var app = express();
 var fs = require('fs');
 
 //adding io 
-var server = http.createServer(app);
+var server = http.createServer(app).listen(8080);
 var io = require('socket.io').listen(server);
 
 
@@ -19,8 +19,6 @@ app.use(express.methodOverride());
 
 var anyDB = require('any-db');
 var conn = anyDB.createConnection('sqlite3://vcp.db');
-
-
 
 
 //rendering html 
@@ -121,5 +119,4 @@ function generateImageID() {
 
 
 
-app.listen(8080);
 console.log('server running on 8080');

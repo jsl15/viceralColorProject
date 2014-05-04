@@ -60,6 +60,7 @@ function sendFile(files, obj, setNum) {
 		
 		
 		//upload a single file
+		console.log('emitting');
 		socket.emit('upload', fd, status);
 		//problems with the progress bar
 		uploadFile(fd, status);
