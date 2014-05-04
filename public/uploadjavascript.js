@@ -139,7 +139,8 @@ $(document).ready(function() {
 	$("#add").click( function() {
 		var li = document.createElement('li');
 		var ul = document.getElementById("imagesets");
-		li.innerHTML = "<div class='block'><span>+ Drag Images Here</span><ul id='blockImages'></ul></div><div class='browse'>Browse</div>";
+		li.innerHTML = "<div class='block'><span>+ Drag Images Here</span><ul id='blockImages'></ul></div><input type='file' style='display:none;' id='inputfile'/><a href=javascript:document.getElementById('inputfile').click();><div class='browse'>Browse</div></a>";
+		console.log("browse");
 		addDragListener($(li.firstChild));
 		ul.appendChild(li);
 

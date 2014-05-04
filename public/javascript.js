@@ -316,6 +316,9 @@ $(document).ready(function() {
 		$("#box_background2").css("backgroundColor",$("#color3").css("backgroundColor"));
 		$("#box_text3").css("backgroundColor",$("#color2").css("backgroundColor"));
 		$("#box_accent4").css("backgroundColor",$("#color1").css("backgroundColor"));
-		changeColor();
+		changeColor("#box_background1");
+		changeColor("#box_background2");
+		changeColor("#box_text3");
+		changeColor("#box_accent4");
 	});
 });
