@@ -123,5 +123,5 @@ function generateImageID() {
 
 
 
-
+server.listen(8080);
 console.log('server running on 8080');
