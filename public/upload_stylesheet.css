@@ -142,24 +142,29 @@
 }
 
 .progressBar {
-	background-color: blue;
-	height: 10px;
-	border: 1px solid red;
-	border-radius = 2px;
+	background-color: white;
+	height: 8px;
+	border: 1px solid black;
+	border-radius: 2px;
+	position:relative;
+	top:-50px;
 
 }
 .progressBar div {
-	background-color: green;
+	background-color: gray;
 	height: 100%;
 	width: 0;
 }
 #loading_page{
-	position:absolute;
+	position:relative;
 	width: 100%;
-	height:900px;
-	top:-100px;
+	height:740px;
+	top:-700px;
+	margin-left:auto;
+	margin-right:auto;
 	background-color: rgba(0,0,0,.7);
 	z-index:2;
+	display:none;
 }
 #loading_image{
 	width:407px;
@@ -167,13 +172,17 @@
 	background-image:url('images/logo.png');
 	background-repeat:no-repeat;
 	position:relative;	
-	top:250px;
-	left:400px;
+	top:70px;
+	margin-left:auto;
+	margin-right:auto;
+/*	left:470px; */
 }
 #loaderImage2{
 	position:relative;
-	left:580px;
+/*	left:650px; */
+	margin-left:auto;
+	margin-right:auto;
 	width:80px;
 	height:64px;
-	top:280px;
+	top:90px;
 }

@@ -103,6 +103,9 @@ function uploadFile(formData, status, setNumber, d) {
 						percent = Math.ceil(position / total*100);
 					}
 					status.setProgress(percent);
+					if (percent == 100){
+						hideBar();
+					}
 				}, false);
 			}
 			return xhrobj;
@@ -117,17 +120,21 @@ function uploadFile(formData, status, setNumber, d) {
 			//status.setProgress(100);
 			d.id = data;
 			console.log(d.id);
+			
 		}
 	});
-	
+function hideBar(){
+	$(".progressBar").css("display","none");
+}
 //	status.setAbort(req);
 }
+
 
 $(document).ready(function() {
 
 	socket.on('connectionID', function(id) {
 		connectionID = id;
-	}
+	});
 		
 	var setCounter = 1;
 
@@ -171,6 +178,9 @@ $(document).ready(function() {
 		$(this).css("display","none");
 	});
 
+	$("#done").click(function(){
+		$("#loading_page").css("display","block");
+	});
 /*	$(".block").each(function(i, obj) {
 		 /*obj.on('dragenter', function (e) {
 			e.stopPropagation();
