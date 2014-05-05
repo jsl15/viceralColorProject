@@ -42,7 +42,7 @@ app.use('/public', express.static('public'));
 
 // set up the database
 conn.query('DROP TABLE photos'); // maybe should do when starting up
-conn.query('CREATE TABLE photos (id TEXT, ext TEXT, setnum TEXT, client TEXT PRIMARY KEY)');
+conn.query('CREATE TABLE photos (id TEXT, ext TEXT, setnum TEXT, client TEXT)');
 
 
 
@@ -161,7 +161,7 @@ function generatePalettes(clientID, num_sets, callback){
 					generate_result(php_script, pic_fp, function(result){
 						palette = $.parseJSON(result).info.colors;
 
-						console.log(palette);
+						console.log('Pictaculous API (php script) result: ',palette);
 
 						palettes = palettes.concat(palette);
 						complete_pictaculous_requests++;
@@ -218,8 +218,8 @@ function generate_result(scriptName, args, callback){
 	var finalresult = null;
 
 	exec(command, function(error, stdout, stderr){
-		console.log('ERROR:',error);
-		console.log('STDERR:',stderr);
+		// console.log('ERROR:',error);
+		// console.log('STDERR:',stderr);
 
 		result = stdout.replace('\n','');
 		result = result.split(',');
@@ -230,10 +230,6 @@ function generate_result(scriptName, args, callback){
 	});
 
 }
-
-
-
-
 
 
 
@@ -272,7 +268,7 @@ app.post('/upload', function(req, res) {
 
 	if ((extensions[extension]) && ((req.files.file.size /1024) < maxFileSize)) {
 		var base64_data = new Buffer(fs.readFileSync(tmpPath)).toString('base64');
-		console.log("moving out of the folder");
+		//console.log("moving out of the folder");
 		fs.rename(tmpPath, newPath, function (err) {
 			if (err) 
 				throw err;
@@ -283,12 +279,17 @@ app.post('/upload', function(req, res) {
 		});
 		result = fileID;
 
+		console.log('About to add a photo to the db');
+
 		add_photo = 'INSERT INTO photos (id, ext, setnum, client) VALUES ($1,$2,$3,$4)';
 
 		conn.query(add_photo, [fileID, extension, setNumber, req.body.connectionID], function(error, result){
-			console.log(error);
-			console.log(result);
-			console.log("added photo " + fileID+' extension '+extension+' set number '+setNumber + ' client = '+req.body.connectionID);
+			console.log('error: ',error);
+			console.log('result: ',result);
+			console.log("added photo: ID ="+fileID+' extension='+extension+' set number='+setNumber+' client='+req.body.connectionID);
+			conn.query('SELECT * FROM photos', function(error, result){
+				console.log(result);
+			});
 		});
 			// .on('error',console.error)
 			// .on('end', function(){
