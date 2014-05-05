@@ -233,8 +233,7 @@ $(document).ready(function() {
 	});
 
 	createSets();
-
-
+	
 	$(".color").draggable( {			  
 	  revert : true, 
 	  	drag : function(event, ui) {
