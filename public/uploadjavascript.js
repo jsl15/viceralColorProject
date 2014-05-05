@@ -124,6 +124,10 @@ function uploadFile(formData, status, setNumber, d) {
 }
 
 $(document).ready(function() {
+	$("#done").click(function() {
+		$("#loading_page").show();
+		socket.emit('done');
+	});
 
 	socket.on('connectionID', function(id) {
 		connectionID = id;
