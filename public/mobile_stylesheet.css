@@ -184,65 +184,6 @@
 	left: 450px;
 }
 
-/*Hover Hex IDS */
-
-#color_ids{
-	font-family:Arial, Helvetica, sans-serif;
-	height:9px;
-	font-size:10px;
-	text-align:center;
-	position: relative;
-}
-
-#color_id1{
-	width:50px;
-	left:-5px;
-	top:4px;
-	position: absolute;
-}
-#color_id1_rgb{
-	width:100px;
-	top:35px;
-	left:-31px;
-	position: absolute;
-}
-#color_id2{
-	width:50px;
-	left:45px;
-	top:4px;
-	position: absolute;
-}
-#color_id2_rgb{
-	width:100px;
-	top:35px;
-	left:18px;
-	position: absolute;
-}
-#color_id3{
-	width:50px;
-	left:95px;
-	top:4px;
-	position: absolute;
-}
-#color_id3_rgb{
-	width:100px;
-	top:35px;
-	left:68px;
-	position: absolute;
-}
-#color_id4{
-	width:50px;
-	left:145px;
-	top:4px;
-	position: absolute;
-}
-#color_id4_rgb{
-	width:100px;
-	top:35px;
-	left:120px;
-	position: absolute;
-}
-
 /*Side-Droppable Boxes*/
 
 #boxes{
@@ -251,6 +192,6 @@
 }
 
 #allPalettes{
-	left: 800px;
+	left: 680px;
 	top: 30px;
 }

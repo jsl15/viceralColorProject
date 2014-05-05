@@ -27,6 +27,34 @@ function createSets(){
 		if (j!=0){
 			$("#"+id).css("display","none");
 		}
+		
+		var setPalette = document.createElement("li");
+		setPalette.setAttribute("class","setColors2");
+
+		var colors = allsets[j][1];
+
+		var color1 = "rgb("+colors[0][0]+","+colors[0][1]+","+colors[0][2]+")";
+		var color2 = "rgb("+colors[1][0]+","+colors[1][1]+","+colors[1][2]+")";
+		var color3 = "rgb("+colors[2][0]+","+colors[2][1]+","+colors[2][2]+")";
+		var color4 = "rgb("+colors[3][0]+","+colors[3][1]+","+colors[3][2]+")";
+
+
+		setPalette.innerHTML = "<div class='colorline'></div> \
+				              <div class='color color1' style='background-color:"+ color1 +"'></div> \
+				              <div id='color_id1' class='color_id'></div> \
+				              <div id='color_id1_rgb' class='color_id_rgb'></div> \
+				              <div class='color color2' style='background-color:"+ color2 +"'></div> \
+				              <div id='color_id2' class='color_id'></div> \
+				              <div id='color_id2_rgb' class='color_id_rgb'></div> \
+				              <div class='color color3' style='background-color:"+ color3 +"'></div> \
+				              <div id='color_id3' class='color_id'></div> \
+				              <div id='color_id3_rgb' class='color_id_rgb'></div> \
+				              <div class='color color4' style='background-color:"+ color4 +"'></div> \
+				              <div id='color_id4' class='color_id'></div> \
+				              <div id='color_id4_rgb' class='color_id_rgb'></div>";
+
+		$("#allPalettes").append(setPalette);
+
 	}
 }
 
@@ -305,22 +333,26 @@ $(document).ready(function() {
 
 	
 	$(".color").hover(function() {
-		var color = $(this).css("backgroundColor");
+		var color = $(this).css("background-color");
 		var colorhex = rgb2hex(color);
 
-		var id = $(this).attr("id");
-		console.log(id[5]);
+		var hex = $(this).next();
+		var rgb = hex.next();
 
-		$("#color_id"+id[5]).append("<div id='colors'></div>"); 
-		$("#color_id"+id[5]+"_rgb").append("<div id='colors_rgb'></div>"); 
-		colors.innerHTML += colorhex;
-		colors_rgb.innerHTML += color;
-		$("#colors").css("color",color);
-		$("#colors_rgb").css("color",color);
-		},
-		function(){
-	 	 	colors.remove();
-			colors_rgb.remove();
+		hex.show();
+		rgb.show();
+
+		hex.html(colorhex);
+		rgb.html(color);
+		hex.css("color",color);
+		rgb.css("color",color);
+
+		}, function(){
+
+		var hex = $(this).next();
+		hex.hide();
+		hex.next().hide();
+
 	});
 
 	$("#triangle-right").click(function(){
