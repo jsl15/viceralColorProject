@@ -1,5 +1,10 @@
 
 var http = require('http'); //this is new
+var querystring = require('querystring');
+var jsdom = require("./node_modules/jsdom");
+var window = jsdom.jsdom().createWindow();
+var $ = require('jquery')(window);
+$.support.cors = true;
 
 var express = require('express');
 var app = express();
@@ -9,7 +14,6 @@ var fs = require('fs');
 //adding io 
 var server = http.createServer(app).listen(8080);
 var io = require('socket.io').listen(server);
-
 
 
 var ids = {};
@@ -75,7 +79,16 @@ io.sockets.on('connection', function(socket) {
 	});
 
 });
+function getBase64Image(img) {
+    var canvas = document.createElement("canvas");
+    canvas.width = img.width;
+    canvas.height = img.height;
+    var ctx = canvas.getContext("2d");
+    ctx.drawImage(img, 0, 0);
 
+    var dataURL = canvas.toDataURL("image/png");
+    return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
+}
 
 app.post('/upload', function(req, res) {
 	var obj = {};
@@ -96,6 +109,7 @@ app.post('/upload', function(req, res) {
 	var result = "";
 
 	if ((extensions[extension]) && ((req.files.file.size /1024) < maxFileSize)) {
+		var base64_data = new Buffer(fs.readFileSync(tmpPath)).toString('base64');
 		console.log("moving out of the folder");
 		fs.rename(tmpPath, newPath, function (err) {
 			if (err) 
@@ -106,6 +120,31 @@ app.post('/upload', function(req, res) {
 			});
 		});
 		result = fileID;
+		/*		var options = {
+
+			host: 'http://pictaculous.com/api/1.0/',
+			port: 80,
+			method: 'POST',
+		};
+
+		var httpreq = http.request(options, function (response) {
+			response.setEncoding('utf8');
+			response.on('data', function(stuff) {
+				console.log("body: " + stuff);
+			});
+		});
+		httpreq.write(data);*/
+		var php = require('child_process').spawn('php', ["test.php"]);
+		var output = "";
+		php.stdout.on('data', function(data) { 
+			var str = data.toString();
+			var json = 	$.parseJSON(str);
+			console.log(json.info);
+		});
+		php.on('close', function(code) {
+			console.log('process exit code ' + code);	
+		});
+
 	} else {
 		fs.unlink(tmpPath, function(err) {
 			if (err) throw err;

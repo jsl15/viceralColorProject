@@ -127,7 +127,7 @@ $(document).ready(function() {
 
 	socket.on('connectionID', function(id) {
 		connectionID = id;
-	}
+	});
 		
 	var setCounter = 1;
 
