@@ -8,6 +8,7 @@
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 <script src="/socket.io/socket.io.js"></script>
 <script type="text/javascript" src ="/public/uploadjavascript.js"></script>
+<script type="text/javascript" src="/public/loader_javascript.js"></script>
 </head>
 <body>
     <div id="nav">
@@ -24,7 +25,7 @@
     <div id="drop_down">
             <img id="drop_down_img" src="/public/images/drop_down.png" alt:"some text"></img>
             <div id="drop_down_text">
-                Upload images to sets to create a color palette for each set of images.
+                Upload images to sets to create a color palette for each except the selected set W, which will be comparable against all the generated palettes.
             </div>
     </div> 
     
@@ -35,7 +36,7 @@
     <div id="sets"> Sets
       <div id="set_numbers">
         <ul id="list_numbers">
-		  <li id="1" class="active">1</li>
+		  <li id="1" class="setW">1</li>
         </ul>
       </div> 
    	</div> 
@@ -44,10 +45,17 @@
     <div id="wrapper">
         <div id="buttons">
             <div id="add">+ set</div>
+<<<<<<< HEAD
             <a href="#" id="done">done</a>
+=======
+           <!-- <a href="/website_page.html" id="done">done</a> -->
+           <div id="done">done</div>
+>>>>>>> FETCH_HEAD
         </div>
+        <form action="">
         <ul id="imagesets">
             <li id="1">
+            	<input type="radio" name="setW" value="1" class="radio" checked>
                 <div class="block">
                     <span>+ Drag Images Here</span>
                     <ul id="blockImages">
@@ -55,78 +63,15 @@
                 </div>    
                 <input type="file" style="display:none;" id="inputfile"/>
                 <a href="javascript:document.getElementById('inputfile').click(); "><div class="browse">Browse</div></a>
+            	</input>
             </li>
-        </ul>
+
+        </ul></form>
     </div> 
     <div id="loading_page">
     	<div id="loading_image"></div>
       <div id="loaderImage2">
       	<div id="loaderImage"></div>
-	<script type="text/javascript">
-	var cSpeed=8;
-	var cWidth=60;
-	var cHeight=64;
-	var cTotalFrames=29;
-	var cFrameWidth=60;
-	var cImageSrc='public/images/sprites.gif';
-	
-	var cImageTimeout=false;
-	var cIndex=0;
-	var cXpos=0;
-	var cPreloaderTimeout=false;
-	var SECONDS_BETWEEN_FRAMES=0;
-	
-	function startAnimation(){
-		
-		document.getElementById('loaderImage').style.backgroundImage='url('+cImageSrc+')';
-		document.getElementById('loaderImage').style.width=cWidth+'px';
-		document.getElementById('loaderImage').style.height=cHeight+'px';
-		
-		//FPS = Math.round(100/(maxSpeed+2-speed));
-		FPS = Math.round(100/cSpeed);
-		SECONDS_BETWEEN_FRAMES = 1 / FPS;
-		
-		cPreloaderTimeout=setTimeout('continueAnimation()', SECONDS_BETWEEN_FRAMES/1000);
-		
-	}
-	
-	function continueAnimation(){
-		
-		cXpos += cFrameWidth;
-		//increase the index so we know which frame of our animation we are currently on
-		cIndex += 1;
-		 
-		//if our cIndex is higher than our total number of frames, we're at the end and should restart
-		if (cIndex >= cTotalFrames) {
-			cXpos =0;
-			cIndex=0;
-		}
-		
-		if(document.getElementById('loaderImage'))
-			document.getElementById('loaderImage').style.backgroundPosition=(-cXpos)+'px 0';
-		
-		cPreloaderTimeout=setTimeout('continueAnimation()', SECONDS_BETWEEN_FRAMES*1000);
-	}
-	
-	function stopAnimation(){//stops animation
-		clearTimeout(cPreloaderTimeout);
-		cPreloaderTimeout=false;
-	}
-	
-	function imageLoader(s, fun)//Pre-loads the sprites image
-	{
-		clearTimeout(cImageTimeout);
-		cImageTimeout=0;
-		genImage = new Image();
-		genImage.onload=function (){cImageTimeout=setTimeout(fun, 0)};
-		genImage.onerror=new Function('alert(\'Could not load the image\')');
-		genImage.src=s;
-	}
-	
-	//The following code starts the animation
-	new imageLoader(cImageSrc, 'startAnimation()');
-	</script>
-    
       </div>
 	</div>
 </body>

@@ -1,8 +1,8 @@
 
 var set1 = ["/public/images/6.png","/public/images/7.png", "/public/images/8.png"];
-var set1_colors = [[0,0,0],[197,96,54],[147, 171, 138],[109,157,184]];
+var set1_colors = [[197,96,54], [0,0,0], [109,157,184], [147, 171, 138]];
 var set2 = ["/public/images/1.png","/public/images/2.png", "/public/images/3.png", "/public/images/4.png", "/public/images/5.png"];
-var set2_colors = [[142,142,142],[214,164,0],[54,92,127],[220,158,130]];
+var set2_colors = [[214,164,0], [54,92,127], [220,158,130], [142,142,142]];
 var set3 = [];
 var set3_colors = [[0,0,0],[0,0,0],[0,0,0],[0,0,0]];
 var allsets = [[set1,set1_colors], [set2,set2_colors], [set3, set3_colors]];
@@ -44,6 +44,16 @@ function changeColors(i){
 
 	var color4 = "rgb("+colors[3][0]+","+colors[3][1]+","+colors[3][2]+")";
 	$("#color4").css("background-color", color4);
+
+	$("#box_background1").css("backgroundColor",color4);
+	$("#box_background2").css("backgroundColor",color3);
+	$("#box_text3").css("backgroundColor",color2);
+	$("#box_accent4").css("backgroundColor",color1);
+
+	changeColor("#box_background1");
+	changeColor("#box_background2");
+	changeColor("#box_text3");
+	changeColor("#box_accent4");
 }
 
 function downsizeImage(){
@@ -191,17 +201,25 @@ function changeColor(id){
 	}
 }
 
+
 $(document).ready(function() {
 
-	// JavaScript Document
-	$("#box_background1").css("backgroundColor",$("#color1").css("backgroundColor"));
-	$("#box_background2").css("backgroundColor",$("#color2").css("backgroundColor"));
-	$("#box_text3").css("backgroundColor",$("#color3").css("backgroundColor"));
-	$("#box_accent4").css("backgroundColor",$("#color4").css("backgroundColor"));
-	changeColor("#box_background1");
-	changeColor("#box_background2");
-	changeColor("#box_text3");
-	changeColor("#box_accent4");
+	if ($("#set_numbers #1").hasClass("setW")){
+		$("#allPalettes").show();
+		$("#setColors").hide();
+		$("#box_background1").css("backgroundColor","lightgray");
+		$("#box_background2").css("backgroundColor","darkgray");
+		$("#box_text3").css("backgroundColor","black");
+		$("#box_accent4").css("backgroundColor","gray");
+		for (var i=1; i<5; i++){			
+			changeColor(""+i);
+		}
+
+	}
+	else {
+		changeColors("1");
+	}
+
 	
 	var drag_color = $("#color2").css("backgroundColor");
 	var drag_box = $("#color2");
@@ -209,7 +227,9 @@ $(document).ready(function() {
 	
 	$("#drop_down_img").slideDown("slow",function(){
 		$("#drop_down_text").fadeIn("slow");
-		$("#setColors").fadeIn("slow");
+		if (!($("#set_numbers #1").hasClass("setW"))){
+			$("#setColors").fadeIn("slow");
+		}
 	});
 
 	createSets();
@@ -222,6 +242,7 @@ $(document).ready(function() {
 	  		drag_box = $(this);
 	  	}
 	});
+
 	$(".box").droppable({
 		
 		drop:function(event,ui){
@@ -233,6 +254,8 @@ $(document).ready(function() {
 	$("#set_numbers li").click( function() {
 		if (!$(this).hasClass("active")){
 
+			downsizeImage();
+
 			var set_i = $("#list_numbers .active").attr("id");
 			$("#setImages #set"+set_i).css("display","none");
 			$("#list_numbers .active").removeClass("active");
@@ -240,7 +263,24 @@ $(document).ready(function() {
 			$(this).addClass("active");
 			set_i = $(this).attr("id");
 			$("#setImages #set"+set_i).css("display","block");
-			changeColors(set_i)
+
+			if ($(this).hasClass("setW")){
+				$("#setColors").hide();
+				$("#box_background1").css("backgroundColor","lightgray");
+				$("#box_background2").css("backgroundColor","darkgray");
+				$("#box_text3").css("backgroundColor","black");
+				$("#box_accent4").css("backgroundColor","gray");
+				for (var i=1; i<5; i++){
+					changeColor(""+i);
+				}
+				$("#allPalettes").show();
+
+			}
+			else{
+				$("#allPalettes").hide();
+				$("#setColors").show();
+				changeColors(set_i);
+			}
 		}
 	});
 
@@ -264,11 +304,6 @@ $(document).ready(function() {
 		downsizeImage();
 	});
 
-	$("#set_numbers li").click( function() {
-		if (!$(this).hasClass("active")){
-			downsizeImage();
-		}
-	});
 	
 	$(".color").hover(function() {
 		var color = $(this).css("backgroundColor");
@@ -309,16 +344,5 @@ $(document).ready(function() {
 		else{
 			webExpand();
 		}
-	});
-	
-	$("#list_numbers li").click(function(){
-		$("#box_background1").css("backgroundColor",$("#color4").css("backgroundColor"));
-		$("#box_background2").css("backgroundColor",$("#color3").css("backgroundColor"));
-		$("#box_text3").css("backgroundColor",$("#color2").css("backgroundColor"));
-		$("#box_accent4").css("backgroundColor",$("#color1").css("backgroundColor"));
-		changeColor("#box_background1");
-		changeColor("#box_background2");
-		changeColor("#box_text3");
-		changeColor("#box_accent4");
 	});
 });
