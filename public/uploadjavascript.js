@@ -103,6 +103,9 @@ function uploadFile(formData, status, setNumber, d) {
 						percent = Math.ceil(position / total*100);
 					}
 					status.setProgress(percent);
+					if (percent == 100){
+						hideBar();
+					}
 				}, false);
 			}
 			return xhrobj;
@@ -117,16 +120,24 @@ function uploadFile(formData, status, setNumber, d) {
 			//status.setProgress(100);
 			d.id = data;
 			console.log(d.id);
+			
 		}
 	});
-	
+function hideBar(){
+	$(".progressBar").css("display","none");
+}
 //	status.setAbort(req);
 }
+
 
 $(document).ready(function() {
 	$("#done").click(function() {
 		$("#loading_page").show();
 		socket.emit('done');
+	});
+
+	$('#done').click( function() {
+		$("#loading_page").show();
 	});
 
 	socket.on('connectionID', function(id) {
@@ -141,14 +152,20 @@ $(document).ready(function() {
 	});
 
 	$("#add").click( function() {
+		setCounter++;
+
 		var li = document.createElement('li');
 		var ul = document.getElementById("imagesets");
-		li.innerHTML = "<div class='block'><span>+ Drag Images Here</span><ul id='blockImages'></ul></div><input type='file' style='display:none;' id='inputfile'/><a href=javascript:document.getElementById('inputfile').click();><div class='browse'>Browse</div></a>";
-		console.log("browse");
+		li.innerHTML = "<input type='radio' name='setW' value ='"+setCounter+"' class='radio'><div class='block'><span>+ Drag Images Here</span><ul id='blockImages'></ul></div><input type='file' style='display:none;' id='inputfile'/><a href=javascript:document.getElementById('inputfile').click();><div class='browse'>Browse</div></a></input>";
 		addDragListener($(li.firstChild));
 		ul.appendChild(li);
 
-		setCounter++;
+		$(":radio[value="+setCounter+"]").click( function() {
+			$(".setW").removeClass("setW");
+			var thisButton = $(this).attr("value");
+			$("#set_numbers #"+thisButton).addClass("setW");
+		});
+
 		var set_li = document.createElement('li');
 		var set_ul = document.getElementById("list_numbers");
 		set_li.innerHTML = setCounter;
@@ -156,6 +173,12 @@ $(document).ready(function() {
 		$(li).attr("id",setCounter);
 		set_ul.appendChild(set_li);
 	});
+
+	$(":radio[value=1]").click( function() {
+		$(".setW").removeClass("setW");
+		$("#set_numbers #1").addClass("setW");
+	});
+
 
 	// $(".browse").hover( function() {
 	// 	$(this).css("color", "white");
@@ -175,6 +198,9 @@ $(document).ready(function() {
 		$(this).css("display","none");
 	});
 
+	$("#done").click(function(){
+		$("#loading_page").css("display","block");
+	});
 /*	$(".block").each(function(i, obj) {
 		 /*obj.on('dragenter', function (e) {
 			e.stopPropagation();
@@ -211,7 +237,6 @@ $(document).ready(function() {
 });
 
 function addDragListener(element) {
-	console.log(element);
 	element.on('dragenter', function (e) {
 			e.stopPropagation();
 			e.preventDefault();

@@ -51,7 +51,7 @@ body{
 #drop_down{
 	left: 0;
 	position: fixed;
-	top:55px;
+	top:53px;
 	width: 100%;
 	z-index: 3;
 }
@@ -76,9 +76,10 @@ body{
 	font-size:14px;
 	color:rgb(158,157,157);
 }
+
 #side_nav{
 	position: fixed;
-	top: 55px;
+	top: 53px;
 	width: 74px;
 	height: 100%;
 	z-index: 3;
@@ -115,6 +116,9 @@ body{
 
 #set_numbers .active{
 	color:#666;
+}
+#set_numbers .setW{
+	color: #2b75bc;
 }
 #set_numbers li:hover{
 	color:rgba(255,255,255,.2);
@@ -212,20 +216,69 @@ body{
 }
 
 #color4{
-	background-color: black;
 	left: 150px;
 }
 
 #color3{
-	background-color: #c56036;
 	left: 100px;
 }
 
 #color2{
-	background-color: #93ab8a;
 	left: 50px;
 }
 
-#color1{
-	background-color: #6d9db8;
+/*Side-Droppable Boxes*/
+
+#boxes{
+	position: absolute;
+	width: 100px;
+	height: 500px;
+	font-family: Helvetica, sans-serif;
+	text-align:center;
+	color:rgba(255,255,255,.5);
+}
+
+.box{
+	width:100px;
+	height:60px;
+	position: absolute;
+}
+
+#box_background1{
+	padding-top: 20px;
+	top:38px;
+}
+#box_background2{
+	padding-top: 20px;
+	top:156px;
+}
+#box_text3{
+	height:80px;
+
+	line-height: 80px;
+	top:271px;
+}
+#box_accent4{
+	height:80px;
+
+	line-height: 80px;
+	top:389px;
+}
+#colorline2{
+	height: 520px;
+	width: 4px;
+	left: 50px;
+	position: absolute;
+	background-color: gray;
+	top:0px;
+}
+
+#allPalettes{
+	width: 200px;
+	height: 500px;
+	border: 3px dashed darkgray;
+	position: absolute;
+	padding: 10px;
+	display: none;
+	overflow-y: auto;
 }
