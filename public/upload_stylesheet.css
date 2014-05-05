@@ -159,21 +159,18 @@
 	width: 0;
 }
 #loading_page{
-<<<<<<< HEAD
 	position:relative;
 	width: 100%;
 	height:740px;
 	top:-700px;
 	margin-left:auto;
 	margin-right:auto;
-=======
 	display: none;
 	position:absolute;
 	width: 100%;
 	height:900px;
 	top: -100px;
 	left: 0;
->>>>>>> FETCH_HEAD
 	background-color: rgba(0,0,0,.7);
 	z-index:2;
 	display:none;
@@ -184,7 +181,6 @@
 	background-image:url('images/logo.png');
 	background-repeat:no-repeat;
 	position:relative;	
-<<<<<<< HEAD
 	top:70px;
 	margin-left:auto;
 	margin-right:auto;
@@ -199,10 +195,7 @@
 	height:64px;
 	top:90px;
 }
-=======
-	margin: auto;
-	top:250px;
-}
+
 #loaderImage2{
 	position:relative;
 	margin: auto;
@@ -216,4 +209,4 @@
 	left: 2px;
 	margin-top: 45px;
 }
->>>>>>> FETCH_HEAD
+
