@@ -91,7 +91,7 @@ io.sockets.on('connection', function(socket) {
 			num_sets = result.rows[0].numsets;
 
 			generatePalettes(socket.id, num_sets, function(result){
-				console.log('result',result);
+				console.log('FINAL PALETTE result: ',result);
 				// DONE, send result to the next page for display
 			});	
 		});
@@ -155,7 +155,7 @@ function generatePalettes(clientID, num_sets, callback){
 					php_script = 'php request.php';
 					pic_fp = './public/images/tmp/'+result.rows[i].id+result.rows[i].ext;
 
-					console.log(pic_fp);
+					//console.log(pic_fp);
 
 					// PHP SCRIPT CALL
 					generate_result(php_script, pic_fp, function(result){
@@ -166,8 +166,7 @@ function generatePalettes(clientID, num_sets, callback){
 						palettes = palettes.concat(palette);
 						complete_pictaculous_requests++;
 						
-						if (complete_pictaculous_requests == num_photos_in_set){
-							return;					
+						if (complete_pictaculous_requests == num_photos_in_set){					
 							// PYTHON SCRIPT CALL
 							generate_result('./palette.py', palettes, function(result){
 								color_sets.push(result);
