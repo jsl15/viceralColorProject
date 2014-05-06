@@ -2,6 +2,7 @@ var socket = io.connect();
 var connectionID;
 var allsets = [];
 var wSetNum = 0;
+var photos = "";
 
 function createSets(){
 	for (var j=0; j<allsets.length; j++){
@@ -16,7 +17,7 @@ function createSets(){
 
 		for (var i=0; i<set.length; i++){
 			var set_i = document.createElement("img");
-			set_i.setAttribute("src",set[i]);
+			set_i.setAttribute("src", "data:image/jpeg;base64,"+set[i]);
 			newset.appendChild(set_i);
 		}
 
@@ -244,14 +245,13 @@ function changeColor(id){
 
 $(document).ready(function() {
 
-	socket.on('returnPalettes', function(palettes, wSet) {
+	socket.on('returnPalettes', function(palettes, wSet, setPhotos) {
 		// console.log('website page got palettes from server!');
 		// console.log(palettes);
 		wSetNum = wSet;
 
-
 		for (var pal=0; pal<palettes.length; pal++){
-			var set = [];
+			var set = setPhotos[pal];
 			var colors = palettes[pal];
 
 			allsets.push([set,colors]);

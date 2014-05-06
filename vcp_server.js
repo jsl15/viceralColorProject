@@ -165,7 +165,22 @@ io.sockets.on('connection', function(socket) {
 
 
 	socket.on('getPalettes', function(clientID){
-		socket.emit('returnPalettes', allPalettes[clientID], wSets[clientID]);
+		conn.query('SELECT id, ext, setnum FROM photos WHERE client=$1', [clientID], function(error, result) {
+			if (error) {
+				console.error;
+			} else {
+				var photos = new Array();
+				for (var i = 0; i<result.rows.length; i++) {
+					var setNum = result.rows[i].setnum;
+					var base64 = new Buffer(fs.readFileSync("public/images/tmp/" + result.rows[i].id + result.rows[i].ext)).toString('base64');
+					if (!photos[setNum-1]) {
+						photos[setNum-1] = new Array();
+					}
+					photos[setNum-1].push(base64);
+				}
+				socket.emit('returnPalettes', allPalettes[clientID], wSets[clientID], photos);
+			}
+		});
 	});
 
 
