@@ -9,6 +9,8 @@ function createList(){
 		var num = document.createElement("li");
 		num.setAttribute("id", j+1+"");
 		num.innerHTML = j+1;
+		console.log("w");
+		console.log(wSetNum);
 		if (j==wSetNum-1){
 			if (j==0){ num.setAttribute("class","active setW"); }
 			else { num.setAttribute("class","setW"); }
@@ -338,6 +340,8 @@ $(document).ready(function() {
 
 		if ($("#set_numbers #1").hasClass("setW")){
 			$("#web #allPalettes").show();
+		} else {
+			$("#web #allPalettes").hide();
 		}
 
 		changeColors("1");
@@ -412,6 +416,7 @@ $(document).ready(function() {
 		$("#mobile").show();
 		$("#websiteButton").removeClass("active");
 		$("#mobileButton").addClass("active");
+		$("#drop_down_text").text("Drag and drop colors to make your ideal mobile app!");
 		$("#boxes").css("top","160px");
 		$("#boxes").css("left","890px");
 		$("#mobile #setImages div").hide();
@@ -427,6 +432,7 @@ $(document).ready(function() {
 		$("#mobile").hide();
 		$("#websiteButton").addClass("active");
 		$("#mobileButton").removeClass("active");
+		$("#drop_down_text").text("Drag and drop colors to make your ideal website!")
 		$("#boxes").css("top","170px");
 		$("#boxes").css("left","1075px");
 		$("#web #setImages div").hide();
