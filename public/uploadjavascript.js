@@ -1,5 +1,5 @@
 var socket = io.connect();
-var connectionID;
+var connectionID = "";
 var numImages = 0;
 var numSets = 1;
 
@@ -72,17 +72,17 @@ function progressBar(obj)
 
 function sendFile(files, obj, setNum) {
 	for (var i=0; i < files.length; i++) {
-		var fd = new FormData();
-		fd.append('file', files[i]);
-		console.log(files[i]);
+		fd = new FormData();
+		fd.append('setNum', setNum);
+		fd.append('connectionID', connectionID);
 		var status = new progressBar(obj);
-		var reader = new FileReader(); // instance of the FileReader
+		var currFile = files[i];
+		reader = new FileReader(); // instance of the FileReader
        	reader.readAsDataURL(files[i]); // read the local file
  		reader.onloadend = function(){ 
-           	var d  = addToSet(this.result, setNum, status);
-			fd.append('setNum', setNum);
-			fd.append('connectionID', connectionID);
-			uploadFile(fd, status, setNum, d);
+           	d  = addToSet(this.result, setNum, status);
+			console.log("about to send");
+			uploadFile(fd, status, currFile, setNum, d);
         }
 
 	/*	//upload a single file
@@ -93,7 +93,8 @@ function sendFile(files, obj, setNum) {
 	}
 }
 
-function uploadFile(formData, status, setNumber, d) {
+function uploadFile(formData, status, currentFile, setNumber, d) {
+	formData.append("file", currentFile);
 	var url = "http://localhost:8080/upload";
 	var req = $.ajax({
 		xhr: function() {
