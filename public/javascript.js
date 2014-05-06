@@ -19,6 +19,22 @@ function createSets(){
 			var set_i = document.createElement("img");
 			set_i.setAttribute("src", "data:image/jpeg;base64,"+set[i]);
 			newset.appendChild(set_i);
+
+			$(set_i).click( function() {
+
+				if (!$(this).hasClass("active")){
+
+					$(this).addClass("active");
+					$(this).css("z-index","1");
+					$("#expand").css("display","block");
+
+					console.log($(this).css("background-color"));
+					if ($(this).css("background-color")=="rgb(0, 0, 255)"){
+						mobileUpsizeImage();
+					}
+					else { webUpsizeImage(); }
+				}
+			});
 		}
 
 		if (j!=0){
@@ -52,6 +68,47 @@ function createSets(){
 
 		$("#allPalettes").append(setPalette);
 
+		var num = document.createElement("li");
+		num.setAttribute("id", j+1+"");
+		num.innerHTML = j+1;
+		if (j==0){
+			num.setAttribute("class","active");
+		}
+		//Add class setW to class here
+		$("#list_numbers").append(num);
+
+		$(num).click( function() {
+			if (!$(this).hasClass("active")){
+
+				downsizeImage();
+
+				var set_i = $("#list_numbers .active").attr("id");
+				$("#setImages #set"+set_i).css("display","none");
+				$("#list_numbers .active").removeClass("active");
+
+				$(this).addClass("active");
+				set_i = $(this).attr("id");
+				$("#setImages #set"+set_i).css("display","block");
+
+				if ($(this).hasClass("setW")){
+					$("#setColors").hide();
+					$("#box_background1").css("backgroundColor","lightgray");
+					$("#box_background2").css("backgroundColor","darkgray");
+					$("#box_text3").css("backgroundColor","black");
+					$("#box_accent4").css("backgroundColor","gray");
+					for (var i=1; i<5; i++){
+						changeColor(""+i);
+					}
+					$("#allPalettes").show();
+
+				}
+				else{
+					$("#allPalettes").hide();
+					$("#setColors").show();
+					changeColors(set_i);
+				}
+			}
+		});
 	}
 }
 
@@ -64,17 +121,23 @@ function changeColors(i){
 	var color3 = colors[2];
 	var color4 = colors[3];
 
-	//var color1 = "rgb("+colors[0][0]+","+colors[0][1]+","+colors[0][2]+")";
 	$("#color1").css("background-color",color1);
-
-	//var color2 = "rgb("+colors[1][0]+","+colors[1][1]+","+colors[1][2]+")";
 	$("#color2").css("background-color",color2);
-
-	//var color3 = "rgb("+colors[2][0]+","+colors[2][1]+","+colors[2][2]+")";
 	$("#color3").css("background-color",color3);
-
-	//var color4 = "rgb("+colors[3][0]+","+colors[3][1]+","+colors[3][2]+")";
 	$("#color4").css("background-color", color4);
+
+	if (color4=="#fff"){
+		$("#box_background1").css("color","gray");
+	}
+	if (color3=="#fff"){
+		$("#box_background2").css("color","gray");
+	}
+	if (color2=="#fff"){
+		$("#box_text3").css("color","gray");
+	}
+	if (color1=="#fff"){
+		$("#box_accent4").css("color","gray");
+	}
 
 	$("#box_background1").css("backgroundColor",color4);
 	$("#box_background2").css("backgroundColor",color3);
@@ -263,11 +326,6 @@ $(document).ready(function() {
 		// var set2_colors = [[214,164,0], [54,92,127], [220,158,130], [142,142,142]];
 		// var set3 = [];
 		// var set3_colors = [[0,0,0],[0,0,0],[0,0,0],[0,0,0]];
-		// // for each set{
-		// 	// set = array of images in set;
-		// 	// colors = palette for set;
-		// 	// allsets.append([set,colors]);
-		// // }
 		// allsets = [[set1,set1_colors], [set2,set2_colors], [set3, set3_colors]];
 
 
@@ -307,19 +365,6 @@ $(document).ready(function() {
 
 	// first thing to actually happen
 	socket.emit('getPalettes', meta('connectionID'));
-
-
-
-	// var set1 = ["/public/images/6.png","/public/images/7.png", "/public/images/8.png"];
-	// var set1_colors = [[197,96,54], [0,0,0], [109,157,184], [147, 171, 138]];
-	// var set2 = ["/public/images/1.png","/public/images/2.png", "/public/images/3.png", "/public/images/4.png", "/public/images/5.png"];
-	// var set2_colors = [[214,164,0], [54,92,127], [220,158,130], [142,142,142]];
-	// var set3 = [];
-	// var set3_colors = [[0,0,0],[0,0,0],[0,0,0],[0,0,0]];
-	
-	// allsets = [[set1,set1_colors], [set2,set2_colors], [set3, set3_colors]];
-
-	
 	
 	$(".color").draggable( {			  
 	  revert : true, 
@@ -337,54 +382,6 @@ $(document).ready(function() {
 		} 
 	});
 	
-	$("#set_numbers li").click( function() {
-		if (!$(this).hasClass("active")){
-
-			downsizeImage();
-
-			var set_i = $("#list_numbers .active").attr("id");
-			$("#setImages #set"+set_i).css("display","none");
-			$("#list_numbers .active").removeClass("active");
-
-			$(this).addClass("active");
-			set_i = $(this).attr("id");
-			$("#setImages #set"+set_i).css("display","block");
-
-			if ($(this).hasClass("setW")){
-				$("#setColors").hide();
-				$("#box_background1").css("backgroundColor","lightgray");
-				$("#box_background2").css("backgroundColor","darkgray");
-				$("#box_text3").css("backgroundColor","black");
-				$("#box_accent4").css("backgroundColor","gray");
-				for (var i=1; i<5; i++){
-					changeColor(""+i);
-				}
-				$("#allPalettes").show();
-
-			}
-			else{
-				$("#allPalettes").hide();
-				$("#setColors").show();
-				changeColors(set_i);
-			}
-		}
-	});
-
-	$("#setImages img").click( function() {
-
-		if (!$(this).hasClass("active")){
-
-			$(this).addClass("active");
-			$(this).css("z-index","1");
-			$("#expand").css("display","block");
-
-			console.log($(this).css("background-color"));
-			if ($(this).css("background-color")=="rgb(0, 0, 255)"){
-				mobileUpsizeImage();
-			}
-			else { webUpsizeImage(); }
-		}
-	});
 
 	$("#expand").click( function() {
 		downsizeImage();

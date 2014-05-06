@@ -1,5 +1,6 @@
 var socket = io.connect();
 var connectionID;
+var numImages = 0;
 
 function addToSet(filepath, setNum, progressBar){
 	var block = $("#imagesets #"+setNum+" .block");
@@ -44,6 +45,8 @@ function addToSet(filepath, setNum, progressBar){
 		console.log(del.id);
 		deleteImage(del.id);
 	});
+
+	numImages++;
 
 	return del;
 
@@ -134,12 +137,13 @@ $(document).ready(function() {
 
 
 	$("#done").click(function() {
-		$("#loading_page").show();
-		socket.emit('doneLoadingPalettes', $('.setW').attr('id'));
-	});
-
-	$('#done').click( function() {
-		$("#loading_page").show();
+		if (numImages!=0){
+			$("#loading_page").show();
+			socket.emit('doneLoadingPalettes', $('.setW').attr('id'));
+		}
+		else{
+			alert("Please upload at least one image.");
+		}
 	});
 
 	socket.on('connectionID', function(id) {
@@ -202,10 +206,6 @@ $(document).ready(function() {
 		$(this).css("display","block");
 	}, function() {
 		$(this).css("display","none");
-	});
-
-	$("#done").click(function(){
-		$("#loading_page").css("display","block");
 	});
 
 	var obj = $(".block");
