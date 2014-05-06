@@ -216,6 +216,14 @@ body{
 #color_id4{
 	left:155px;
 }
+#color_id5{
+	left:205px;
+}
+
+#color_id6{
+	left:255px;
+}
+
 
 .color_id_rgb{
 	width:100px;
@@ -236,18 +244,25 @@ body{
 #color_id4_rgb{
 	left:125px;
 }
+#color_id5_rgb{
+	left:175px;
+}
+#color_id6_rgb{
+	left:225px;
+}
 
  
 /*Draggable Colors Pallete*/
 
 #setColors{
 	display: none;
-	margin: auto;
-	left: 620px;
+	left: 570px;
 	top: -4px;
 	position: relative;
 	font-family:Arial, Helvetica, sans-serif;
 	font-size:10px;
+	width: 300px;
+	height: 50px;
 }
 
 .setColors2{
@@ -259,7 +274,7 @@ body{
 
 .colorline{
 	height: 2px;
-	width: 200px;
+	width: 300px;
 	position: absolute;
 	background-color: gray;
 	top: 25px;
@@ -287,6 +302,17 @@ body{
 .color2{
 	left: 55px;
 }
+
+.color5{
+	left: 205px;
+	background-color: white;
+}
+
+.color6{
+	left: 255px;
+	background-color: black;
+}
+
 
 /*Side-Droppable Boxes*/
 

@@ -95,7 +95,7 @@ function createSets(type){
 
 		var colors = allsets[j][1];
 
-		setPalette.innerHTML = "<div class='colorline'></div> \
+		setPalette.innerHTML = "<div class='colorline' style='width: 200px'></div> \
 				              <div class='color color1' style='background-color:"+ colors[0] +"'></div> \
 				              <div id='color_id1' class='color_id'></div> \
 				              <div id='color_id1_rgb' class='color_id_rgb'></div> \
@@ -110,6 +110,7 @@ function createSets(type){
 				              <div id='color_id4_rgb' class='color_id_rgb'></div>";
 
 		$(".color").hover(function() {
+			console.log("yes");
 			var color = $(this).css("background-color");
 			var colorhex = rgb2hex(color);
 
