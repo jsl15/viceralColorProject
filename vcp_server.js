@@ -42,9 +42,9 @@ app.use('/public', express.static('public'));
 
 // set up the database
 conn.query('DROP TABLE photos'); // maybe should do when starting up
-conn.query('DROP TABLE palettes');
+//conn.query('DROP TABLE palettes');
 conn.query('CREATE TABLE photos (id TEXT, ext TEXT, setnum TEXT, client TEXT)');
-conn.query('CREATE TABLE palettes (color TEXT, setnum TEXT, client TEXT)');
+//conn.query('CREATE TABLE palettes (color TEXT, setnum TEXT, client TEXT)');
 
 var allPalettes = {};
 
@@ -180,6 +180,8 @@ io.sockets.on('connection', function(socket) {
 	});
 
 	socket.on('disconnect', function() {
+		delete allPalettes[socket.id];
+
 		deleteAll = 'DELETE FROM photos WHERE client=$1';
 		conn.query(deleteAll,[socket.id])
 			.on('error',console.error)
