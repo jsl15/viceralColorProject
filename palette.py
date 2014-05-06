@@ -98,12 +98,18 @@ def generate_representative_colors(palettes, k=4):
 	gets returned and experiment with different techniques.
 	
 
-	Edge case: if there are fewer than seven colors overall, 
+	Edge case: if there are fewer than eight colors overall, 
 	just return four of them at random. It is difficult to classify
-	such a small number of colors into distinct clusters.
+	such a small number of colors into distinct clusters. As above,
+	if there are fewer than four of these, white and black are
+	supplemented.
 	'''
+	extra = ['white','black','white','black']
 
+	# handle very small palettes
 	if len(palettes) < 7:
+		while len(palettes) < 4:
+			palettes.append(Color(extra.pop(0)).hex)
 		shuffle(palettes)
 		return palettes[:4]
 
@@ -143,7 +149,6 @@ def generate_representative_colors(palettes, k=4):
 
 
 	# now add white/black if there were empty clusters
-	extra = ['white','black','white','black']
 	while len(random_rep_colors) < 4:
 		random_rep_colors.append(Color(extra.pop(0)).hex)
 
