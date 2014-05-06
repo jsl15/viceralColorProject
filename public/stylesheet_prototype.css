@@ -296,11 +296,9 @@ body{
 	height: 500px;
 	font-family: Helvetica, sans-serif;
 	text-align:center;
-<<<<<<< HEAD
 	color:darkgray;
-=======
-	color:darkgrey;
->>>>>>> FETCH_HEAD
+	top:170px;
+	left: 1075px;
 }
 
 .box{
