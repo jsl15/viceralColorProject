@@ -5,9 +5,11 @@ takes in a list of palettes; outputs a single consolidated palette.
 Each palette is a list of 6 hex colors generated from an image.
 sometimes it generates fewer than six? so it should be flexible.
 
-don't forget that in order to be able to import from the colour package
-you have to install it from the PyPI with "pip install colour"
+Don't forget that in order to be able to import from the colour package
+you have to install it from PyPI with `pip install colour`
 
+Also, make sure that this file is executable (i.e. call `chmod +x palette.py`).
+This allows the Node child_process.exec() in the server to call this script.
 '''
 
 from colour import Color
@@ -31,6 +33,7 @@ def str_to_list(s):
 	return colors
 
 
+
 def list_to_str(l):
 	'''converts python list to a string that javascript
 	can easily convert to an array'''
@@ -43,12 +46,13 @@ def list_to_str(l):
 	return s[:-1] # remove the extra comma at the end
 
 
+
 def convert_colors(palette):
 	'''converts from a hex string to the color object
 	so we can ask it about its hue and such.
 	you can pass in a palette (list of colors) or a list of palettes.
-	TODO: remove the ability to pass a list of palettes, we will
-	never be using that '''
+	Our current implementation never passes a list of per-image palettes.
+	'''
 
 	hsv_palette = []
 
@@ -66,21 +70,30 @@ def convert_colors(palette):
 
 
 
-
 def generate_representative_colors(palettes, k=4):
 	''' 
-	In our current server/website implementation, k=4 always. 
-	So there should not be an option to change it. 
+	In our current implementation, k==4, so there is
+	no option to change it.  
 
-	do a clustering alg like k-means clustering
-	maybe rgb would work better than hsl? try it idk
+	Perform k-means clustering on the data, and then pick
+	a random representative color from each cluster. Through
+	experimentation, we have seen that choosing a random
+	representative color per cluster works better than choosing
+	the mean of each cluster.
+
+	Note that the whitening step (common to perform before k-means
+	clustering) is ommitted in this implementation because it would
+	mess up the scaling of the RGB values.
 
 
-	I think I should have it pick a relatively large number of clusters,
-	and then pick the most important ones by the ones which have the
-	largest number of colors in them (which you can find out by looking
-	in "labels")
+	This function always returns four colors. In cases where very 
+	few colors have been inputted, the kmeans algorithm cannot
+	generate four distinct clusters. In these cases, white and 
+	black are chosen arbitrarily to supplement the palette.
 
+	This function calculates a good deal of extra data that
+	is not returned, such that one can easily manipulate what
+	gets returned and experiment with different techniques.
 	'''
 
 	hsl = []
@@ -93,40 +106,21 @@ def generate_representative_colors(palettes, k=4):
 	hsl = np.array(hsl)
 	rgb = np.array(rgb)
 
+	#rgb = whiten(rgb)
 
-	# hsl = whiten(hsl) 
-	''' prob don't do whiten, it doesn't make sense here
-	because it will result in values > 1.
-	should try to understand what the purpose of whitening is
-	in more depth so that we know its ok not to do it'''
-
-
-
-
-	#centroids, labels = kmeans2(hsl, k)
 	centroids, cluster_ids = kmeans2(rgb, k)
-	# problem = we're getting negative values...
-	# problem = sometimes we get a value greater than one...
-	# this problem will not be an issue if we don't use the centroids though.
-
-	''' just pick the centroids '''
+	
+	''' pick the centroids '''
 	# mean_colors = []
 	# for c in centroids:
 	# 	mean_colors.append(Color(rgb=tuple(c)).hex)
-
 	# print 'mean_colors',mean_colors
 
 
-	''' pick a random representative color for each
-	of the k clusters. This also works when one or more of the
-	clusters is empty. Should probably also handle it such that
-	we add white and/or black if there are not enough.'''
+	''' pick a random representative color for each cluster '''
 	cluster_mappings = [[] for i in range(4)]
 	for i in xrange(len(cluster_ids)):
 		cluster_mappings[cluster_ids[i]].append(i)
-
-	# print 'cluster_ids',cluster_ids
-	# print 'cluster_mappings',cluster_mappings
 
 	random_rep_colors = []
 	for cluster in cluster_mappings:
@@ -141,23 +135,7 @@ def generate_representative_colors(palettes, k=4):
 		random_rep_colors.append(Color(extra.pop(0)).hex)
 
 
-
-	# print 'random_colors',random_rep_colors
-	# return
-
-
-
-	
-	# should we try to get at least one color from each image? or what.
-	# idk. or should we just put all the colors in a big list and 
-	# then go from there.
-
-	# the problem here may be what to do with outliers. like maybe should exclude outliers
-	# if they will throw off the means.
-
 	return random_rep_colors
-
-
 
 
 
@@ -165,10 +143,13 @@ def generate_representative_colors(palettes, k=4):
 
 if __name__ == '__main__':
 
+	# Convert javascript input string to python list
 	palettes = convert_colors(str_to_list(sys.argv[1]))
 
+	# run clustering algorithm to generate palette
 	result = generate_representative_colors(palettes)
 
+	# return result to the server
 	print list_to_str(result)
 
 
