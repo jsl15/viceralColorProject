@@ -1,6 +1,7 @@
 var socket = io.connect();
 var connectionID;
 var numImages = 0;
+var numSets = 1;
 
 function addToSet(filepath, setNum, progressBar){
 	var block = $("#imagesets #"+setNum+" .block");
@@ -132,6 +133,13 @@ function hideBar(){
 //	status.setAbort(req);
 }
 
+function handleFileSelect(e) {
+	var files = e.target.files;
+	console.log("fileselect");
+	sendFile(files, $(this).parent().children().eq(1), $(this).parent().attr('id'));
+}
+
+
 $(document).ready(function() {
 
 
@@ -172,10 +180,22 @@ $(document).ready(function() {
 
 		var li = document.createElement('li');
 		var ul = document.getElementById("imagesets");
-		li.innerHTML = "<input type='radio' name='setW' value ='"+setCounter+"' class='radio'><div class='block'><span>+ Drag Images Here</span><ul id='blockImages'></ul></div><input type='file' style='display:none;' id='inputfile'/><a href=javascript:document.getElementById('inputfile').click();><div class='browse'>Browse</div></a></input>";
-		addDragListener($(li.firstChild).next());
-		console.log
+		var input = document.createElement('input');
+		input.type = "file";
+		input.id = "input" + setCounter.toString();
+		input.style.display = "none";
+		li.innerHTML = "<input type='radio' name='setW' value ='"+setCounter+"' class='radio'><div class='block'><span>+ Drag Images Here</span><ul id='blockImages'></ul></div><a href=javascript:document.getElementById('input"+setCounter+"').click();><div class='browse'>Browse</div></a></input>";
+		li.appendChild(input);
 		ul.appendChild(li);
+ 		currSets = numSets;
+		addDragListener($(li.firstChild).next());
+		$(input).on("change", function (e) {
+			var files = e.target.files;
+			console.log("got a new file");
+			console.log($(this).id);
+			sendFile(files, $(this).parent().children().eq(1), li.id);
+		});
+
 
 		$(":radio[value="+setCounter+"]").click( function() {
 			$(".setW").removeClass("setW");
@@ -190,6 +210,12 @@ $(document).ready(function() {
 		$(li).attr("id",setCounter);
 		set_ul.appendChild(set_li);
 	});
+	$("#input1").on("change", function (e) {
+			var files = e.target.files;
+			console.log("got a new file");
+			console.log($(this).id);
+			sendFile(files, $(this).parent().children().eq(1), 1);
+	});
 
 	$(":radio[value=1]").click( function() {
 		$(".setW").removeClass("setW");
@@ -201,6 +227,8 @@ $(document).ready(function() {
 	}, function() {
 		$(this).next().css("display","none");
 	});
+	
+	$(".fileupload").on('change','input[type="file"]', handleFileSelect);
 
 	$("#blockImages .hover").hover( function() {
 		$(this).css("display","block");
@@ -242,9 +270,10 @@ function addDragListener(element) {
 			var files = e.originalEvent.dataTransfer.files;
 			console.log("got drop");
 			console.log(files);
-			var setNum = $(this).parent().index() + 1;
-			sendFile(files, element, setNum);
+			s = $(this).parent().index() + 1;
+			sendFile(files, element, s);
 		});
+		
 }
 
 

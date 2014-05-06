@@ -24,9 +24,17 @@ body{
 	position:relative;
 	display:inline-block;
 	left:34px;
-	top:18px;
+	top:5px;
+	color:rgb(214,212,212);
+	height:16px;
+	padding:10px;
+	border-radius:5px;
+	background-color:rgba(255,255,255,.2);
+	font-family:Helvetica, sans-serif;
+	text-decoration:none;
+	font-size:14px;
 }
-
+/*
 #main_nav li a{
 	color:rgb(214,212,212);
 	height:50px;
@@ -36,8 +44,8 @@ body{
 	font-family:Helvetica, sans-serif;
 	text-decoration:none;
 	font-size:14px;
-}
-#main_nav a:hover{
+}*/
+#main_nav li:hover{
     background-color:rgba(255,255,255,.3);
 }
 
@@ -131,7 +139,6 @@ body{
 /*Website and Mobile shared code*/
 
 #setImages img{
-	max-height: 90px;
 	width: 150px;
 	position: relative;
 	margin-right: 5px;
@@ -289,7 +296,11 @@ body{
 	height: 500px;
 	font-family: Helvetica, sans-serif;
 	text-align:center;
-	color:rgba(255,255,255,.5);
+<<<<<<< HEAD
+	color:darkgray;
+=======
+	color:darkgrey;
+>>>>>>> FETCH_HEAD
 }
 
 .box{
