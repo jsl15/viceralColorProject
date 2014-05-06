@@ -127,16 +127,16 @@ function changeColors(i){
 	$("#color4").css("background-color", color4);
 
 	if (color4=="#fff"){
-		$("#box_background1").css("color","gray");
+		$("#box_background1").css("color","darkgray");
 	}
 	if (color3=="#fff"){
-		$("#box_background2").css("color","gray");
+		$("#box_background2").css("color","darkgray");
 	}
 	if (color2=="#fff"){
-		$("#box_text3").css("color","gray");
+		$("#box_text3").css("color","darkgray");
 	}
 	if (color1=="#fff"){
-		$("#box_accent4").css("color","gray");
+		$("#box_accent4").css("color","darkgray");
 	}
 
 	$("#box_background1").css("backgroundColor",color4);
@@ -151,19 +151,20 @@ function changeColors(i){
 }
 
 function downsizeImage(){
-	$("#setImages .active").css("max-height","90px");
 	$("#setImages .active").css("width","150px");
 	$("#setImages .active").css("z-index","0");
 	if ($("#setImages .active").hasClass("web")){
 		$("#setImages .active").removeClass("web");
 		$("#setImages .active").css("margin-left", "25px");
 	}
+	else{
+		$("setImages.active").removeClass("active");
+	}
 	$("#setImages .active").removeClass("active");
 	$("#expand").css("display","none");
 }
 
 function webUpsizeImage(){
-	$("#setImages .active").css("max-height","190px");
 	$("#setImages .active").css("width","190px");
 	$("#setImages .active").css("margin-left","0px");
 	$("#setImages .active").addClass("web");
@@ -359,34 +360,42 @@ $(document).ready(function() {
 
 		createSets();
 
+		$(".color").draggable( {			  
+		  revert : true, 
+		  	drag : function(event, ui) {
+		  		drag_color = $(this).css("backgroundColor");
+		  		drag_box = $(this);
+		  	}
+		});
+
+		$(".box").droppable({
+			drop:function(event,ui){
+				$(this).css("backgroundColor",drag_color);
+				console.log(drag_color);
+				if (drag_color=="rgb(255, 255, 255)"){
+					$(this).css("color","gray");
+				}
+				else {
+					$(this).css("color","darkgrey");
+					$(this).css("color","rgba(255,255,255,.5)");
+				}
+				changeColor($(this).attr("id"));
+			} 
+		});
+	
+
+		$("#expand").click( function() {
+			downsizeImage();
+		});
+
+	
+
 
 	});
 	
 
 	// first thing to actually happen
 	socket.emit('getPalettes', meta('connectionID'));
-	
-	$(".color").draggable( {			  
-	  revert : true, 
-	  	drag : function(event, ui) {
-	  		drag_color = $(this).css("backgroundColor");
-	  		drag_box = $(this);
-	  	}
-	});
-
-	$(".box").droppable({
-		
-		drop:function(event,ui){
-			$(this).css("backgroundColor",drag_color);
-			changeColor($(this).attr("id"));
-		} 
-	});
-	
-
-	$("#expand").click( function() {
-		downsizeImage();
-	});
-
 	
 	$(".color").hover(function() {
 		var color = $(this).css("background-color");

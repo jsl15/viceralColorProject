@@ -165,6 +165,7 @@
 /*Expandable Images Sets*/
 
 #setImages img{
+	max-height: 90px;
 	background-color: blue;
 }
 
