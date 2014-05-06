@@ -4,7 +4,57 @@ var allsets = [];
 var wSetNum = 0;
 var photos = "";
 
-function createSets(){
+function createList(){
+	for (var j=0; j<allsets.length; j++){
+		var num = document.createElement("li");
+		num.setAttribute("id", j+1+"");
+		num.innerHTML = j+1;
+
+		if (j==0){
+			num.setAttribute("class","active");
+		}
+		if (j==wSetNum-1){
+			num.setAttribute("class","setW");
+		}
+		//Add class setW to class here
+		$("#list_numbers").append(num);
+
+		$(num).click( function() {
+			if (!$(this).hasClass("active")){
+
+				downsizeImage("web");
+				downsizeImage("mobile");
+
+				var set_i = $("#list_numbers .active").attr("id");
+				$("#setImages #set"+set_i).css("display","none");
+				$("#list_numbers .active").removeClass("active");
+
+				$(this).addClass("active");
+				set_i = $(this).attr("id");
+				$("#setImages #set"+set_i).css("display","block");
+
+				if ($(this).hasClass("setW")){
+					//$("#setColors").hide();
+					//$("#box_background1").css("backgroundColor","lightgray");
+					//$("#box_background2").css("backgroundColor","darkgray");
+					//$("#box_text3").css("backgroundColor","black");
+					//$("#box_accent4").css("backgroundColor","gray");
+					//for (var i=1; i<5; i++){
+					//	changeColor(""+i);
+					//}
+					$("#allPalettes").show();
+				}
+				else{
+					$("#allPalettes").hide();
+					$("#setColors").show();
+					changeColors(set_i);
+				}
+			}
+		});
+	}
+}
+
+function createSets(type){
 	for (var j=0; j<allsets.length; j++){
 
 		var set = allsets[j][0];
@@ -12,8 +62,11 @@ function createSets(){
 
 		var newset = document.createElement("div");
 		newset.setAttribute("id",id);
-		var setImages = document.getElementById("setImages");
-		setImages.appendChild(newset);
+		var setImages;
+		if (type == "web") { setImages = $("#web #setImages"); }
+		else { setImages = $("#mobile #setImages");}
+
+		setImages.append(newset);
 
 		for (var i=0; i<set.length; i++){
 			var set_i = document.createElement("img");
@@ -26,13 +79,14 @@ function createSets(){
 
 					$(this).addClass("active");
 					$(this).css("z-index","1");
-					$("#expand").css("display","block");
+					if (type=="web"){ $("#web #expand").css("display","block"); }
+					else { $("#mobile #expand").css("display","block"); }
 
 					console.log($(this).css("background-color"));
-					if ($(this).css("background-color")=="rgb(0, 0, 255)"){
-						mobileUpsizeImage();
+					if (type=="web"){
+						webUpsizeImage();
 					}
-					else { webUpsizeImage(); }
+					else { mobileUpsizeImage(); }
 				}
 			});
 		}
@@ -46,74 +100,31 @@ function createSets(){
 
 		var colors = allsets[j][1];
 
-		var color1 = "rgb("+colors[0][0]+","+colors[0][1]+","+colors[0][2]+")";
-		var color2 = "rgb("+colors[1][0]+","+colors[1][1]+","+colors[1][2]+")";
-		var color3 = "rgb("+colors[2][0]+","+colors[2][1]+","+colors[2][2]+")";
-		var color4 = "rgb("+colors[3][0]+","+colors[3][1]+","+colors[3][2]+")";
+		// var color1 = "rgb("+colors[0][0]+","+colors[0][1]+","+colors[0][2]+")";
+		// var color2 = "rgb("+colors[1][0]+","+colors[1][1]+","+colors[1][2]+")";
+		// var color3 = "rgb("+colors[2][0]+","+colors[2][1]+","+colors[2][2]+")";
+		// var color4 = "rgb("+colors[3][0]+","+colors[3][1]+","+colors[3][2]+")";
 
 
-		setPalette.innerHTML = "<div class='colorline'></div> \
-				              <div class='color color1' style='background-color:"+ color1 +"'></div> \
-				              <div id='color_id1' class='color_id'></div> \
-				              <div id='color_id1_rgb' class='color_id_rgb'></div> \
-				              <div class='color color2' style='background-color:"+ color2 +"'></div> \
-				              <div id='color_id2' class='color_id'></div> \
-				              <div id='color_id2_rgb' class='color_id_rgb'></div> \
-				              <div class='color color3' style='background-color:"+ color3 +"'></div> \
-				              <div id='color_id3' class='color_id'></div> \
-				              <div id='color_id3_rgb' class='color_id_rgb'></div> \
-				              <div class='color color4' style='background-color:"+ color4 +"'></div> \
-				              <div id='color_id4' class='color_id'></div> \
-				              <div id='color_id4_rgb' class='color_id_rgb'></div>";
+		// setPalette.innerHTML = "<div class='colorline'></div> \
+		// 		              <div class='color color1' style='background-color:"+ color1 +"'></div> \
+		// 		              <div id='color_id1' class='color_id'></div> \
+		// 		              <div id='color_id1_rgb' class='color_id_rgb'></div> \
+		// 		              <div class='color color2' style='background-color:"+ color2 +"'></div> \
+		// 		              <div id='color_id2' class='color_id'></div> \
+		// 		              <div id='color_id2_rgb' class='color_id_rgb'></div> \
+		// 		              <div class='color color3' style='background-color:"+ color3 +"'></div> \
+		// 		              <div id='color_id3' class='color_id'></div> \
+		// 		              <div id='color_id3_rgb' class='color_id_rgb'></div> \
+		// 		              <div class='color color4' style='background-color:"+ color4 +"'></div> \
+		// 		              <div id='color_id4' class='color_id'></div> \
+		// 		              <div id='color_id4_rgb' class='color_id_rgb'></div>";
 
-		$("#allPalettes").append(setPalette);
-
-		var num = document.createElement("li");
-		num.setAttribute("id", j+1+"");
-		num.innerHTML = j+1;
-		if (j==0){
-			num.setAttribute("class","active");
-		}
-		//Add class setW to class here
-		$("#list_numbers").append(num);
-
-		$(num).click( function() {
-			if (!$(this).hasClass("active")){
-
-				downsizeImage();
-
-				var set_i = $("#list_numbers .active").attr("id");
-				$("#setImages #set"+set_i).css("display","none");
-				$("#list_numbers .active").removeClass("active");
-
-				$(this).addClass("active");
-				set_i = $(this).attr("id");
-				$("#setImages #set"+set_i).css("display","block");
-
-				if ($(this).hasClass("setW")){
-					$("#setColors").hide();
-					$("#box_background1").css("backgroundColor","lightgray");
-					$("#box_background2").css("backgroundColor","darkgray");
-					$("#box_text3").css("backgroundColor","black");
-					$("#box_accent4").css("backgroundColor","gray");
-					for (var i=1; i<5; i++){
-						changeColor(""+i);
-					}
-					$("#allPalettes").show();
-
-				}
-				else{
-					$("#allPalettes").hide();
-					$("#setColors").show();
-					changeColors(set_i);
-				}
-			}
-		});
+		$("#"+type+" #allPalettes").append(setPalette);
 	}
 }
 
 function changeColors(i){
-	console.log('allsets:',allsets);
 	var colors = allsets[i-1][1];
 
 	var color1 = colors[0];
@@ -126,19 +137,6 @@ function changeColors(i){
 	$("#color3").css("background-color",color3);
 	$("#color4").css("background-color", color4);
 
-	if (color4=="#fff"){
-		$("#box_background1").css("color","darkgray");
-	}
-	if (color3=="#fff"){
-		$("#box_background2").css("color","darkgray");
-	}
-	if (color2=="#fff"){
-		$("#box_text3").css("color","darkgray");
-	}
-	if (color1=="#fff"){
-		$("#box_accent4").css("color","darkgray");
-	}
-
 	$("#box_background1").css("backgroundColor",color4);
 	$("#box_background2").css("backgroundColor",color3);
 	$("#box_text3").css("backgroundColor",color2);
@@ -150,66 +148,66 @@ function changeColors(i){
 	changeColor("#box_accent4");
 }
 
-function downsizeImage(){
-	$("#setImages .active").css("width","150px");
-	$("#setImages .active").css("z-index","0");
-	if ($("#setImages .active").hasClass("web")){
-		$("#setImages .active").removeClass("web");
-		$("#setImages .active").css("margin-left", "25px");
+function downsizeImage(type){
+	$("#"+type +" #setImages .active").css("width","150px");
+	$("#"+type +" #setImages .active").css("z-index","0");
+	if ($("#"+type +" #setImages .active").hasClass("web")){
+		$("#"+type +" #setImages .active").removeClass("web");
+		$("#"+type +" #setImages .active").css("margin-left", "25px");
 	}
-	else{
-		$("setImages.active").removeClass("active");
+	else {
+		$("#"+type +" #setImages .active").css("max-height","90px");
 	}
-	$("#setImages .active").removeClass("active");
-	$("#expand").css("display","none");
+	$("#"+type +" #setImages .active").removeClass("active");
+	$("#"+type +" #expand").css("display","none");
 }
 
 function webUpsizeImage(){
-	$("#setImages .active").css("width","190px");
-	$("#setImages .active").css("margin-left","0px");
-	$("#setImages .active").addClass("web");
+	$("#web #setImages .active").css("width","190px");
+	$("#web #setImages .active").css("margin-left","0px");
+	$("#web #setImages .active").addClass("web");
 }
 
 function mobileUpsizeImage(){
-	$("#setImages .active").css("max-height","305px");
-	$("#setImages .active").css("width","305px");
+	$("#mobile #setImages .active").css("max-height","305px");
+	$("#mobile #setImages .active").css("width","305px");
 }
 
 function mobileShrink(){
-	$("#setImages").animate({
+	$("#mobile #setImages").animate({
 			left: "355px",
 			"padding-right": "10px",
 			width: "0px"
 		}, "slow", function() {
-			$("#triangle-left").fadeIn("slow");
+			$("#mobile #triangle-left").fadeIn("slow");
 	});
 }
 
 function mobileExpand(){
-	$("#setImages").animate({
+	$("#mobile #setImages").animate({
 			left: "30px",
 			"padding-right": "20px",
 			width: "315px"
 		}, "slow", function() {
-			$("#triangle-right").fadeIn("slow");
+			$("#mobile #triangle-right").fadeIn("slow");
 	});
 }
 
 function webShrink(){
-	$("#setImages").animate({
+	$("#web #setImages").animate({
 			left: "378px",
 			width: "0px"
 		}, "slow", function() {
-			$("#triangle-left").fadeIn("slow");
+			$("#web #triangle-left").fadeIn("slow");
 	});
 }
 
 function webExpand(){
-	$("#setImages").animate({
+	$("#web #setImages").animate({
 			left: "188px",
 			width: "190px"
 		}, "slow", function() {
-			$("#triangle-right").fadeIn("slow");
+			$("#web #triangle-right").fadeIn("slow");
 	});
 }
 
@@ -231,6 +229,7 @@ function hex2rgb(hex) {
 
 
 function changeColor(id){
+	console.log("EEEEEH "+id);
 	var box = id.charAt(id.length-1);
 	var color;
 	if (box == "1"){
@@ -272,6 +271,7 @@ function changeColor(id){
 		$("#fake_nav .active").css("color",color);
 
 		//mobile
+		console.log("YES!");
 		$("#phoneText").css("color",color);	
 		$(".username").css("color",color);
 		$(".comment").css("color",color);
@@ -317,7 +317,7 @@ $(document).ready(function() {
 		for (var pal=0; pal<palettes.length; pal++){
 			var set = setPhotos[pal];
 			var colors = palettes[pal];
-
+			console.log(colors);
 			allsets.push([set,colors]);
 		}
 
@@ -328,23 +328,25 @@ $(document).ready(function() {
 		// var set3 = [];
 		// var set3_colors = [[0,0,0],[0,0,0],[0,0,0],[0,0,0]];
 		// allsets = [[set1,set1_colors], [set2,set2_colors], [set3, set3_colors]];
-
+		createSets("web");
+		createSets("mobile");
+		createList();
 
 		if ($("#set_numbers #1").hasClass("setW")){
 			$("#allPalettes").show();
-			$("#setColors").hide();
-			$("#box_background1").css("backgroundColor","lightgray");
-			$("#box_background2").css("backgroundColor","darkgray");
-			$("#box_text3").css("backgroundColor","black");
-			$("#box_accent4").css("backgroundColor","gray");
-			for (var i=1; i<5; i++){			
-				changeColor(""+i);
-			}
+			// $("#setColors").hide();
+			// $("#box_background1").css("backgroundColor","lightgray");
+			// $("#box_background2").css("backgroundColor","darkgray");
+			// $("#box_text3").css("backgroundColor","black");
+			// $("#box_accent4").css("backgroundColor","gray");
+			// for (var i=1; i<5; i++){			
+			// 	changeColor(""+i);
+			// }
 
 		}
-		else {
-			changeColors("1");
-		}
+
+		changeColors("1");
+
 
 
 		var drag_color = $("#color2").css("backgroundColor");
@@ -353,12 +355,8 @@ $(document).ready(function() {
 		
 		$("#drop_down_img").slideDown("slow",function(){
 			$("#drop_down_text").fadeIn("slow");
-			if (!($("#set_numbers #1").hasClass("setW"))){
-				$("#setColors").fadeIn("slow");
-			}
+			$("#setColors").fadeIn("slow");
 		});
-
-		createSets();
 
 		$(".color").draggable( {			  
 		  revert : true, 
@@ -371,31 +369,25 @@ $(document).ready(function() {
 		$(".box").droppable({
 			drop:function(event,ui){
 				$(this).css("backgroundColor",drag_color);
-				console.log(drag_color);
-				if (drag_color=="rgb(255, 255, 255)"){
-					$(this).css("color","gray");
-				}
-				else {
-					$(this).css("color","darkgrey");
-					$(this).css("color","rgba(255,255,255,.5)");
-				}
 				changeColor($(this).attr("id"));
 			} 
 		});
-	
-
-		$("#expand").click( function() {
-			downsizeImage();
-		});
-
-	
-
 
 	});
 	
 
 	// first thing to actually happen
 	socket.emit('getPalettes', meta('connectionID'));
+
+
+	$("#mobile #expand").click( function() {
+		downsizeImage("mobile");
+	});
+
+	$("#web #expand").click( function() {
+		downsizeImage("web");
+	});
+
 	
 	$(".color").hover(function() {
 		var color = $(this).css("background-color");
@@ -420,27 +412,47 @@ $(document).ready(function() {
 
 	});
 
-	$("#triangle-right").click(function(){
+	$("#web #triangle-right").click(function(){
 		$(this).css("display","none");
-		$("#setImages img").css("display","none");
-		if ($(this).css("left")=="35px"){
-			mobileShrink();
-		}
-		else{
-			webShrink();
-		}
+		$("#web #setImages img").css("display","none");
+		webShrink();
 	});
 
-	$("#triangle-left").click(function(){
+	$("#web #triangle-left").click(function(){
 		$(this).css("display","none");
-		$("#setImages img").css("display","inline");
-		if ($(this).css("left")=="360px"){
-			mobileExpand();
-		}
-		else{
-			webExpand();
-		}
+		$("#web #setImages img").css("display","inline");
+		webExpand();
 	});
+
+	$("#mobile #triangle-right").click(function(){
+		$(this).css("display","none");
+		$("#mobile #setImages img").css("display","none");
+		mobileShrink();
+	});
+
+	$("#mobile #triangle-left").click(function(){
+		$(this).css("display","none");
+		$("#mobile #setImages img").css("display","inline");
+		mobileExpand();
+	});
+
+
+	$("#mobileButton").click( function() {
+		$("#web").hide();
+		$("#mobile").show();
+		$("#websiteButton").removeClass("active");
+		$("#mobileButton").addClass("active");
+		$("#boxes").css("top","160px");
+		$("#boxes").css("left","890px");
+	});
+	$("#websiteButton").click( function() {
+		$("#web").show();
+		$("#mobile").hide();
+		$("#websiteButton").addClass("active");
+		$("#mobileButton").removeClass("active");
+		$("#boxes").css("top","170px");
+		$("#boxes").css("left","1075px");
+	})
 });
 
 
