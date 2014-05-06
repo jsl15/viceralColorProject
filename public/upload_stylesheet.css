@@ -177,19 +177,14 @@
 	background-image:url('images/logo.png');
 	background-repeat:no-repeat;
 	position:relative;	
-<<<<<<< HEAD
 	top:130px;
-=======
-	top:250px;
->>>>>>> FETCH_HEAD
 	margin-left:auto;
 	margin-right:auto;
 }
 
 #loaderImage2{
 	position:relative;
-<<<<<<< HEAD
-=======
+
 	margin-left:auto;
 	margin-right:auto;
 	width:80px;
@@ -199,7 +194,6 @@
 
 #loaderImage2{
 	position:relative;
->>>>>>> FETCH_HEAD
 	margin: auto;
 	width:80px;
 	height:64px;
