@@ -413,6 +413,7 @@ $(document).ready(function() {
 		$("#mobile").show();
 		$("#websiteButton").removeClass("active");
 		$("#mobileButton").addClass("active");
+		$("#drop_down_text").text("Drag and drop colors to make your ideal mobile app!");
 		$("#boxes").css("top","160px");
 		$("#boxes").css("left","890px");
 	});
@@ -421,6 +422,7 @@ $(document).ready(function() {
 		$("#mobile").hide();
 		$("#websiteButton").addClass("active");
 		$("#mobileButton").removeClass("active");
+		$("#drop_down_text").text("Drag and drop colors to make your ideal website!")
 		$("#boxes").css("top","170px");
 		$("#boxes").css("left","1075px");
 	})
