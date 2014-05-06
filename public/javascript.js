@@ -22,7 +22,7 @@ function createSets(){
 		if (j!=0){
 			$("#"+id).css("display","none");
 		}
-		
+
 		var setPalette = document.createElement("li");
 		setPalette.setAttribute("class","setColors2");
 
@@ -255,6 +255,19 @@ $(document).ready(function() {
 
 			allsets.push([set,colors]);
 		}
+
+		// var set1 = ["/public/images/6.png","/public/images/7.png", "/public/images/8.png"];
+		// var set1_colors = [[197,96,54], [0,0,0], [109,157,184], [147, 171, 138]];
+		// var set2 = ["/public/images/1.png","/public/images/2.png", "/public/images/3.png", "/public/images/4.png", "/public/images/5.png"];
+		// var set2_colors = [[214,164,0], [54,92,127], [220,158,130], [142,142,142]];
+		// var set3 = [];
+		// var set3_colors = [[0,0,0],[0,0,0],[0,0,0],[0,0,0]];
+		// // for each set{
+		// 	// set = array of images in set;
+		// 	// colors = palette for set;
+		// 	// allsets.append([set,colors]);
+		// // }
+		// allsets = [[set1,set1_colors], [set2,set2_colors], [set3, set3_colors]];
 
 
 		if ($("#set_numbers #1").hasClass("setW")){

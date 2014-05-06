@@ -237,6 +237,10 @@ function generatePalettes(clientID, num_sets, callback){
 								color_sets.push(result);
 								
 								complete_sets++;
+								
+								console.log('called python script, now have # complete sets = ',complete_sets);
+
+								
 								if (complete_sets == num_sets){
 									callback(color_sets);
 									// finished! send to next page for display
