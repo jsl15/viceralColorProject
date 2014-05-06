@@ -178,7 +178,15 @@ io.sockets.on('connection', function(socket) {
 					}
 					photos[setNum-1].push(base64);
 				}
-				socket.emit('returnPalettes', allPalettes[clientID], wSets[clientID], photos);
+				var palettes = new Array();
+				var keys = Object.keys(allPalettes[clientID]);
+				for (var i = 0; i < keys.length; i ++) {
+					console.log(keys[i]);
+					palettes[parseInt(keys[i])-1] = allPalettes[clientID][parseInt(keys[i])];
+				}
+				console.log(allPalettes[clientID]);
+				console.log(palettes);
+				socket.emit('returnPalettes', palettes, wSets[clientID], photos);
 			}
 		});
 	});
@@ -365,7 +373,7 @@ app.post('/upload', function(req, res) {
 	// console.log(req.connection.remoteAddress);
 	// console.log(req.socket.remoteAddress);
 	// console.log(req.headers['x-forwarded-for']);
-	var extensions={".png":true, ".jpg":true, ".JPG":true, ".GIF":true, ".PNG":true, ".gif":true};
+	var extensions={".png":true, ".jpg":true, ".jpeg":true, ".JPG":true, ".GIF":true, ".PNG":true, ".gif":true};
 	var maxFileSize = 500000000;
 	var fileName = req.files.file.name;
 	console.log(fileName);
