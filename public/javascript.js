@@ -137,6 +137,22 @@ function changeColors(i){
 	$("#color3").css("background-color",color3);
 	$("#color4").css("background-color", color4);
 
+<<<<<<< HEAD
+=======
+	if (color4=="#fff"){
+		$("#box_background1").css("color","darkgray");
+	}
+	if (color3=="#fff"){
+		$("#box_background2").css("color","darkgray");
+	}
+	if (color2=="#fff"){
+		$("#box_text3").css("color","darkgray");
+	}
+	if (color1=="#fff"){
+		$("#box_accent4").css("color","darkgray");
+	}
+
+>>>>>>> FETCH_HEAD
 	$("#box_background1").css("backgroundColor",color4);
 	$("#box_background2").css("backgroundColor",color3);
 	$("#box_text3").css("backgroundColor",color2);
@@ -148,6 +164,7 @@ function changeColors(i){
 	changeColor("#box_accent4");
 }
 
+<<<<<<< HEAD
 function downsizeImage(type){
 	$("#"+type +" #setImages .active").css("width","150px");
 	$("#"+type +" #setImages .active").css("z-index","0");
@@ -166,6 +183,26 @@ function webUpsizeImage(){
 	$("#web #setImages .active").css("width","190px");
 	$("#web #setImages .active").css("margin-left","0px");
 	$("#web #setImages .active").addClass("web");
+=======
+function downsizeImage(){
+	$("#setImages .active").css("width","150px");
+	$("#setImages .active").css("z-index","0");
+	if ($("#setImages .active").hasClass("web")){
+		$("#setImages .active").removeClass("web");
+		$("#setImages .active").css("margin-left", "25px");
+	}
+	else{
+		$("setImages.active").removeClass("active");
+	}
+	$("#setImages .active").removeClass("active");
+	$("#expand").css("display","none");
+}
+
+function webUpsizeImage(){
+	$("#setImages .active").css("width","190px");
+	$("#setImages .active").css("margin-left","0px");
+	$("#setImages .active").addClass("web");
+>>>>>>> FETCH_HEAD
 }
 
 function mobileUpsizeImage(){
@@ -367,6 +404,16 @@ $(document).ready(function() {
 		$(".box").droppable({
 			drop:function(event,ui){
 				$(this).css("backgroundColor",drag_color);
+<<<<<<< HEAD
+=======
+				console.log(drag_color);
+				if (drag_color=="rgb(255, 255, 255)"){
+					$(this).css("color","gray");
+				}
+				else {
+					$(this).css("color","darkgrey");
+				}
+>>>>>>> FETCH_HEAD
 				changeColor($(this).attr("id"));
 			} 
 		});
