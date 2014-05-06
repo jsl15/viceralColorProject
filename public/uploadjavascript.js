@@ -16,7 +16,6 @@ function addToSet(filepath, setNum, progressBar){
 	var hover = document.createElement("div");
 	var jhover = $(hover);
 	jhover.attr("class","hover");
-	// jhover.css("display","none");
 	jhover.html("<div class='delete'>X</div>");
 
 	var img = $("#imagesets #"+setNum+" ul li:first-child img");
@@ -43,7 +42,6 @@ function addToSet(filepath, setNum, progressBar){
 	var del = jhover.children();
 	del.click ( function() {
 		img.parent().remove();
-		console.log(del.id);
 		deleteImage(del.id);
 	});
 
@@ -63,7 +61,6 @@ function progressBar(obj)
 	var padding = 5;
     this.setProgress = function(progress)
     {       
-    	console.log(this.width);
         var progressBarWidth = progress*this.width/ 100;  
         this.bar.find('div').animate({ width: progressBarWidth }, 10).html("");
     }
@@ -77,19 +74,14 @@ function sendFile(files, obj, setNum) {
 		fd.append('connectionID', connectionID);
 		var status = new progressBar(obj);
 		var currFile = files[i];
-		reader = new FileReader(); // instance of the FileReader
-       	reader.readAsDataURL(files[i]); // read the local file
+		reader = new FileReader(); 
+       	reader.readAsDataURL(files[i]); 
  		reader.onloadend = function(){ 
            	d  = addToSet(this.result, setNum, status);
-			console.log("about to send");
 			uploadFile(fd, status, currFile, setNum, d);
         }
 
-	/*	//upload a single file
-		console.log('emitting');
-		socket.emit('upload', fd, status);
-		//problems with the progress bar
-		uploadFile(fd, status);*/
+
 	}
 }
 
@@ -122,21 +114,16 @@ function uploadFile(formData, status, currentFile, setNumber, d) {
 		cache: false,
 		data: formData,
 		success: function (data) {
-			//status.setProgress(100);
 			d.id = data;
-			console.log(d.id);
-			
 		}
 	});
 function hideBar(){
 	 $(".progressBar").css("display","none");
 }
-//	status.setAbort(req);
 }
 
 function handleFileSelect(e) {
 	var files = e.target.files;
-	console.log("fileselect");
 	sendFile(files, $(this).parent().children().eq(1), $(this).parent().attr('id'));
 }
 
@@ -192,8 +179,6 @@ $(document).ready(function() {
 		addDragListener($(li.firstChild).next());
 		$(input).on("change", function (e) {
 			var files = e.target.files;
-			console.log("got a new file");
-			console.log($(this).id);
 			sendFile(files, $(this).parent().children().eq(1), li.id);
 		});
 
@@ -213,8 +198,6 @@ $(document).ready(function() {
 	});
 	$("#input1").on("change", function (e) {
 			var files = e.target.files;
-			console.log("got a new file");
-			console.log($(this).id);
 			sendFile(files, $(this).parent().children().eq(1), 1);
 	});
 
@@ -258,7 +241,6 @@ function addDragListener(element) {
 	element.on('dragenter', function (e) {
 			e.stopPropagation();
 			e.preventDefault();
-			console.log("Drag event");
 	});
 
 	element.on('dragover', function (e) {
@@ -269,8 +251,6 @@ function addDragListener(element) {
 	element.on('drop', function (e) {
 			e.preventDefault();
 			var files = e.originalEvent.dataTransfer.files;
-			console.log("got drop");
-			console.log(files);
 			s = $(this).parent().index() + 1;
 			sendFile(files, element, s);
 		});

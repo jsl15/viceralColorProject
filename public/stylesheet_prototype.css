@@ -34,17 +34,7 @@ body{
 	text-decoration:none;
 	font-size:14px;
 }
-/*
-#main_nav li a{
-	color:rgb(214,212,212);
-	height:50px;
-	padding:10px;
-	border-radius:5px;
-	background-color:rgba(255,255,255,.2);
-	font-family:Helvetica, sans-serif;
-	text-decoration:none;
-	font-size:14px;
-}*/
+
 #main_nav li:hover{
     background-color:rgba(255,255,255,.3);
 }
