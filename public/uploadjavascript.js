@@ -135,7 +135,7 @@ $(document).ready(function() {
 
 	$("#done").click(function() {
 		$("#loading_page").show();
-		socket.emit('doneLoadingPalettes');
+		socket.emit('doneLoadingPalettes', $('.setW').attr('id'));
 	});
 
 	$('#done').click( function() {

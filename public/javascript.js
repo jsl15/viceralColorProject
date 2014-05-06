@@ -1,6 +1,7 @@
 var socket = io.connect();
 var connectionID;
 var allsets = [];
+var wSetNum = 0;
 
 function createSets(){
 	for (var j=0; j<allsets.length; j++){
@@ -243,11 +244,11 @@ function changeColor(id){
 
 $(document).ready(function() {
 
-	console.log('my name = ',meta('connectionID'));
+	socket.on('returnPalettes', function(palettes, wSet) {
+		// console.log('website page got palettes from server!');
+		// console.log(palettes);
+		wSetNum = wSet;
 
-	socket.on('returnPalettes', function(palettes) {
-		console.log('website page got palettes from server!');
-		console.log(palettes);
 
 		for (var pal=0; pal<palettes.length; pal++){
 			var set = [];

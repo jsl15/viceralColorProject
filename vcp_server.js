@@ -47,6 +47,7 @@ conn.query('CREATE TABLE photos (id TEXT, ext TEXT, setnum TEXT, client TEXT)');
 //conn.query('CREATE TABLE palettes (color TEXT, setnum TEXT, client TEXT)');
 
 var allPalettes = {};
+var wSets = {};
 
 
 
@@ -145,7 +146,9 @@ io.sockets.on('connection', function(socket) {
 	});
 
 
-	socket.on('doneLoadingPalettes', function(){
+	socket.on('doneLoadingPalettes', function(wSetNum){
+		wSets[socket.id] = wSetNum;
+
 		conn.query('SELECT MAX(setnum) AS numsets FROM photos WHERE client=$1', [socket.id], function(error, result){
 			num_sets = result.rows[0].numsets;
 
@@ -162,7 +165,7 @@ io.sockets.on('connection', function(socket) {
 
 
 	socket.on('getPalettes', function(clientID){
-		socket.emit('returnPalettes', allPalettes[clientID]);
+		socket.emit('returnPalettes', allPalettes[clientID], wSets[clientID]);
 	});
 
 
