@@ -107,11 +107,13 @@ def generate_representative_colors(palettes, k=4):
 	extra = ['white','black','white','black']
 
 	# handle very small palettes
-	if len(palettes) < 7:
-		while len(palettes) < 4:
-			palettes.append(Color(extra.pop(0)).hex)
-		shuffle(palettes)
-		return palettes[:4]
+	if len(palettes) < 8:
+		result = [c.hex for c in palettes]
+		while len(result) < 4:
+			result.append(Color(extra.pop(0)).hex)
+		
+		shuffle(result)
+		return result[:4]
 
 
 	hsl = []
