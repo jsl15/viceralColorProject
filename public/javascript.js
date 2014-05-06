@@ -62,6 +62,7 @@ function createSets(type){
 
 		console.log("SET NUM: "+j+" SET LENGTH: "+set.length);
 		for (var i=0; i<set.length; i++){
+			console.log("SET NUMBER: "+(j+1)+" IMAGE NUMBER :"+i);
 			var set_i = document.createElement("img");
 			set_i.setAttribute("src", "data:image/jpeg;base64,"+set[i]);
 			newset.appendChild(set_i);
@@ -177,6 +178,7 @@ function webUpsizeImage(){
 	$("#web #setImages .active").css("width","190px");
 	$("#web #setImages .active").css("margin-left","0px");
 	$("#web #setImages .active").addClass("web");
+
 }
 
 function mobileUpsizeImage(){
@@ -281,6 +283,7 @@ function changeColor(id){
 		$("#fake_nav .active").css("color",color);
 
 		//mobile
+
 		$("#phoneText").css("color",color);	
 		$(".username").css("color",color);
 		$(".comment").css("color",color);
@@ -332,6 +335,7 @@ $(document).ready(function() {
 		createSets("web");
 		createSets("mobile");
 		createList();
+
 
 		if ($("#set_numbers #1").hasClass("setW")){
 			$("#web #allPalettes").show();
