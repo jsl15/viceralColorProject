@@ -359,34 +359,41 @@ $(document).ready(function() {
 
 		createSets();
 
+		$(".color").draggable( {			  
+		  revert : true, 
+		  	drag : function(event, ui) {
+		  		drag_color = $(this).css("backgroundColor");
+		  		drag_box = $(this);
+		  	}
+		});
+
+		$(".box").droppable({
+			drop:function(event,ui){
+				$(this).css("backgroundColor",drag_color);
+				console.log(drag_color);
+				if (drag_color=="rgb(255, 255, 255)"){
+					$(this).css("color","gray");
+				}
+				else {
+					$(this).css("color","rgba(255,255,255,.5)");
+				}
+				changeColor($(this).attr("id"));
+			} 
+		});
+	
+
+		$("#expand").click( function() {
+			downsizeImage();
+		});
+
+	
+
 
 	});
 	
 
 	// first thing to actually happen
 	socket.emit('getPalettes', meta('connectionID'));
-	
-	$(".color").draggable( {			  
-	  revert : true, 
-	  	drag : function(event, ui) {
-	  		drag_color = $(this).css("backgroundColor");
-	  		drag_box = $(this);
-	  	}
-	});
-
-	$(".box").droppable({
-		
-		drop:function(event,ui){
-			$(this).css("backgroundColor",drag_color);
-			changeColor($(this).attr("id"));
-		} 
-	});
-	
-
-	$("#expand").click( function() {
-		downsizeImage();
-	});
-
 	
 	$(".color").hover(function() {
 		var color = $(this).css("background-color");
