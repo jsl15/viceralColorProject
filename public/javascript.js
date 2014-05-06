@@ -46,9 +46,8 @@ function createList(){
 				}
 				else{
 					$("#allPalettes").hide();
-					$("#setColors").show();
-					changeColors(set_i);
 				}
+				changeColors(set_i);
 			}
 		});
 	}
@@ -69,6 +68,7 @@ function createSets(type){
 		setImages.append(newset);
 
 		for (var i=0; i<set.length; i++){
+			console.log("SET NUMBER: "+(j+1)+" IMAGE NUMBER :"+i);
 			var set_i = document.createElement("img");
 			set_i.setAttribute("src", "data:image/jpeg;base64,"+set[i]);
 			newset.appendChild(set_i);
@@ -100,25 +100,25 @@ function createSets(type){
 
 		var colors = allsets[j][1];
 
-		var color1 = "rgb("+colors[0][0]+","+colors[0][1]+","+colors[0][2]+")";
-		var color2 = "rgb("+colors[1][0]+","+colors[1][1]+","+colors[1][2]+")";
-		var color3 = "rgb("+colors[2][0]+","+colors[2][1]+","+colors[2][2]+")";
-		var color4 = "rgb("+colors[3][0]+","+colors[3][1]+","+colors[3][2]+")";
+		// var color1 = "rgb("+colors[0][0]+","+colors[0][1]+","+colors[0][2]+")";
+		// var color2 = "rgb("+colors[1][0]+","+colors[1][1]+","+colors[1][2]+")";
+		// var color3 = "rgb("+colors[2][0]+","+colors[2][1]+","+colors[2][2]+")";
+		// var color4 = "rgb("+colors[3][0]+","+colors[3][1]+","+colors[3][2]+")";
 
 
-		setPalette.innerHTML = "<div class='colorline'></div> \
-				              <div class='color color1' style='background-color:"+ color1 +"'></div> \
-				              <div id='color_id1' class='color_id'></div> \
-				              <div id='color_id1_rgb' class='color_id_rgb'></div> \
-				              <div class='color color2' style='background-color:"+ color2 +"'></div> \
-				              <div id='color_id2' class='color_id'></div> \
-				              <div id='color_id2_rgb' class='color_id_rgb'></div> \
-				              <div class='color color3' style='background-color:"+ color3 +"'></div> \
-				              <div id='color_id3' class='color_id'></div> \
-				              <div id='color_id3_rgb' class='color_id_rgb'></div> \
-				              <div class='color color4' style='background-color:"+ color4 +"'></div> \
-				              <div id='color_id4' class='color_id'></div> \
-				              <div id='color_id4_rgb' class='color_id_rgb'></div>";
+		// setPalette.innerHTML = "<div class='colorline'></div> \
+		// 		              <div class='color color1' style='background-color:"+ color1 +"'></div> \
+		// 		              <div id='color_id1' class='color_id'></div> \
+		// 		              <div id='color_id1_rgb' class='color_id_rgb'></div> \
+		// 		              <div class='color color2' style='background-color:"+ color2 +"'></div> \
+		// 		              <div id='color_id2' class='color_id'></div> \
+		// 		              <div id='color_id2_rgb' class='color_id_rgb'></div> \
+		// 		              <div class='color color3' style='background-color:"+ color3 +"'></div> \
+		// 		              <div id='color_id3' class='color_id'></div> \
+		// 		              <div id='color_id3_rgb' class='color_id_rgb'></div> \
+		// 		              <div class='color color4' style='background-color:"+ color4 +"'></div> \
+		// 		              <div id='color_id4' class='color_id'></div> \
+		// 		              <div id='color_id4_rgb' class='color_id_rgb'></div>";
 
 		$("#"+type+" #allPalettes").append(setPalette);
 	}
@@ -136,7 +136,6 @@ function changeColors(i){
 	$("#color2").css("background-color",color2);
 	$("#color3").css("background-color",color3);
 	$("#color4").css("background-color", color4);
-
 
 	$("#box_background1").css("backgroundColor",color4);
 	$("#box_background2").css("backgroundColor",color3);
@@ -231,6 +230,7 @@ function hex2rgb(hex) {
 
 
 function changeColor(id){
+	//console.log("EEEEEH "+id);
 	var box = id.charAt(id.length-1);
 	var color;
 	if (box == "1"){
@@ -272,6 +272,7 @@ function changeColor(id){
 		$("#fake_nav .active").css("color",color);
 
 		//mobile
+		//console.log("YES!");
 		$("#phoneText").css("color",color);	
 		$(".username").css("color",color);
 		$(".comment").css("color",color);
@@ -317,7 +318,7 @@ $(document).ready(function() {
 		for (var pal=0; pal<palettes.length; pal++){
 			var set = setPhotos[pal];
 			var colors = palettes[pal];
-
+			console.log(colors);
 			allsets.push([set,colors]);
 		}
 
@@ -332,7 +333,7 @@ $(document).ready(function() {
 		createSets("mobile");
 		createList();
 
-		if ($("#set_numbers #1").hasClass("setW")){
+		if ($("#1").hasClass("setW")){
 			$("#allPalettes").show();
 			// $("#setColors").hide();
 			// $("#box_background1").css("backgroundColor","lightgray");
@@ -358,7 +359,6 @@ $(document).ready(function() {
 			$("#setColors").fadeIn("slow");
 		});
 
-
 		setTimeout(function(){
 			$(".color").draggable( {			  
 			  revert : true, 
@@ -376,8 +376,6 @@ $(document).ready(function() {
 				} 
 			});
 		}, 800);
-
-		
 
 	});
 	
@@ -448,12 +446,16 @@ $(document).ready(function() {
 		$("#mobile").show();
 		$("#websiteButton").removeClass("active");
 		$("#mobileButton").addClass("active");
+		$("#boxes").css("top","160px");
+		$("#boxes").css("left","890px");
 	});
 	$("#websiteButton").click( function() {
 		$("#web").show();
 		$("#mobile").hide();
 		$("#websiteButton").addClass("active");
 		$("#mobileButton").removeClass("active");
+		$("#boxes").css("top","170px");
+		$("#boxes").css("left","1075px");
 	})
 });
 
