@@ -9,14 +9,13 @@ function createList(){
 		var num = document.createElement("li");
 		num.setAttribute("id", j+1+"");
 		num.innerHTML = j+1;
-
-		if (j==0){
+		if (j==wSetNum-1){
+			if (j==0){ num.setAttribute("class","active setW"); }
+			else { num.setAttribute("class","setW"); }
+		}
+		else if (j==0){
 			num.setAttribute("class","active");
 		}
-		if (j==wSetNum-1){
-			num.setAttribute("class","setW");
-		}
-		//Add class setW to class here
 		$("#list_numbers").append(num);
 
 		$(num).click( function() {
@@ -34,18 +33,12 @@ function createList(){
 				$("#setImages #set"+set_i).css("display","block");
 
 				if ($(this).hasClass("setW")){
-					//$("#setColors").hide();
-					//$("#box_background1").css("backgroundColor","lightgray");
-					//$("#box_background2").css("backgroundColor","darkgray");
-					//$("#box_text3").css("backgroundColor","black");
-					//$("#box_accent4").css("backgroundColor","gray");
-					//for (var i=1; i<5; i++){
-					//	changeColor(""+i);
-					//}
-					$("#allPalettes").show();
+					$("#web #allPalettes").show();
+					$("#mobile #allPalettes").show();
 				}
 				else{
-					$("#allPalettes").hide();
+					$("#web #allPalettes").hide();
+					$("#mobile #allPalettes").hide();
 				}
 				changeColors(set_i);
 			}
@@ -67,6 +60,7 @@ function createSets(type){
 
 		setImages.append(newset);
 
+		console.log("SET NUM: "+j+" SET LENGTH: "+set.length);
 		for (var i=0; i<set.length; i++){
 			console.log("SET NUMBER: "+(j+1)+" IMAGE NUMBER :"+i);
 			var set_i = document.createElement("img");
@@ -100,27 +94,45 @@ function createSets(type){
 
 		var colors = allsets[j][1];
 
-		// var color1 = "rgb("+colors[0][0]+","+colors[0][1]+","+colors[0][2]+")";
-		// var color2 = "rgb("+colors[1][0]+","+colors[1][1]+","+colors[1][2]+")";
-		// var color3 = "rgb("+colors[2][0]+","+colors[2][1]+","+colors[2][2]+")";
-		// var color4 = "rgb("+colors[3][0]+","+colors[3][1]+","+colors[3][2]+")";
+		setPalette.innerHTML = "<div class='colorline'></div> \
+				              <div class='color color1' style='background-color:"+ colors[0] +"'></div> \
+				              <div id='color_id1' class='color_id'></div> \
+				              <div id='color_id1_rgb' class='color_id_rgb'></div> \
+				              <div class='color color2' style='background-color:"+ colors[1] +"'></div> \
+				              <div id='color_id2' class='color_id'></div> \
+				              <div id='color_id2_rgb' class='color_id_rgb'></div> \
+				              <div class='color color3' style='background-color:"+ colors[2] +"'></div> \
+				              <div id='color_id3' class='color_id'></div> \
+				              <div id='color_id3_rgb' class='color_id_rgb'></div> \
+				              <div class='color color4' style='background-color:"+ colors[3] +"'></div> \
+				              <div id='color_id4' class='color_id'></div> \
+				              <div id='color_id4_rgb' class='color_id_rgb'></div>";
 
+		$(".color").hover(function() {
+			var color = $(this).css("background-color");
+			var colorhex = rgb2hex(color);
 
-		// setPalette.innerHTML = "<div class='colorline'></div> \
-		// 		              <div class='color color1' style='background-color:"+ color1 +"'></div> \
-		// 		              <div id='color_id1' class='color_id'></div> \
-		// 		              <div id='color_id1_rgb' class='color_id_rgb'></div> \
-		// 		              <div class='color color2' style='background-color:"+ color2 +"'></div> \
-		// 		              <div id='color_id2' class='color_id'></div> \
-		// 		              <div id='color_id2_rgb' class='color_id_rgb'></div> \
-		// 		              <div class='color color3' style='background-color:"+ color3 +"'></div> \
-		// 		              <div id='color_id3' class='color_id'></div> \
-		// 		              <div id='color_id3_rgb' class='color_id_rgb'></div> \
-		// 		              <div class='color color4' style='background-color:"+ color4 +"'></div> \
-		// 		              <div id='color_id4' class='color_id'></div> \
-		// 		              <div id='color_id4_rgb' class='color_id_rgb'></div>";
+			var hex = $(this).next();
+			var rgb = hex.next();
 
-		$("#"+type+" #allPalettes").append(setPalette);
+			hex.show();
+			rgb.show();
+
+			hex.html(colorhex);
+			rgb.html(color);
+			hex.css("color",color);
+			rgb.css("color",color);
+
+			}, function(){
+
+			var hex = $(this).next();
+			hex.hide();
+			hex.next().hide();
+
+		});
+
+		if (type == "web") { $("#web #allPalettes").append(setPalette); }
+		else { $("#mobile #allPalettes").append(setPalette); }
 	}
 }
 
@@ -230,7 +242,6 @@ function hex2rgb(hex) {
 
 
 function changeColor(id){
-	//console.log("EEEEEH "+id);
 	var box = id.charAt(id.length-1);
 	var color;
 	if (box == "1"){
@@ -272,7 +283,7 @@ function changeColor(id){
 		$("#fake_nav .active").css("color",color);
 
 		//mobile
-		//console.log("YES!");
+
 		$("#phoneText").css("color",color);	
 		$(".username").css("color",color);
 		$(".comment").css("color",color);
@@ -318,37 +329,19 @@ $(document).ready(function() {
 		for (var pal=0; pal<palettes.length; pal++){
 			var set = setPhotos[pal];
 			var colors = palettes[pal];
-			console.log(colors);
 			allsets.push([set,colors]);
 		}
 
-		// var set1 = ["/public/images/6.png","/public/images/7.png", "/public/images/8.png"];
-		// var set1_colors = [[197,96,54], [0,0,0], [109,157,184], [147, 171, 138]];
-		// var set2 = ["/public/images/1.png","/public/images/2.png", "/public/images/3.png", "/public/images/4.png", "/public/images/5.png"];
-		// var set2_colors = [[214,164,0], [54,92,127], [220,158,130], [142,142,142]];
-		// var set3 = [];
-		// var set3_colors = [[0,0,0],[0,0,0],[0,0,0],[0,0,0]];
-		// allsets = [[set1,set1_colors], [set2,set2_colors], [set3, set3_colors]];
 		createSets("web");
 		createSets("mobile");
 		createList();
 
-		if ($("#1").hasClass("setW")){
-			$("#allPalettes").show();
-			// $("#setColors").hide();
-			// $("#box_background1").css("backgroundColor","lightgray");
-			// $("#box_background2").css("backgroundColor","darkgray");
-			// $("#box_text3").css("backgroundColor","black");
-			// $("#box_accent4").css("backgroundColor","gray");
-			// for (var i=1; i<5; i++){			
-			// 	changeColor(""+i);
-			// }
 
+		if ($("#set_numbers #1").hasClass("setW")){
+			$("#web #allPalettes").show();
 		}
 
 		changeColors("1");
-
-
 
 		var drag_color = $("#color2").css("backgroundColor");
 		var drag_box = $("#color2");
@@ -371,12 +364,10 @@ $(document).ready(function() {
 			$(".box").droppable({
 				drop:function(event,ui){
 					$(this).css("backgroundColor",drag_color);
-
 					changeColor($(this).attr("id"));
 				} 
 			});
-		}, 800);
-
+		},800);
 	});
 	
 
@@ -390,30 +381,6 @@ $(document).ready(function() {
 
 	$("#web #expand").click( function() {
 		downsizeImage("web");
-	});
-
-	
-	$(".color").hover(function() {
-		var color = $(this).css("background-color");
-		var colorhex = rgb2hex(color);
-
-		var hex = $(this).next();
-		var rgb = hex.next();
-
-		hex.show();
-		rgb.show();
-
-		hex.html(colorhex);
-		rgb.html(color);
-		hex.css("color",color);
-		rgb.css("color",color);
-
-		}, function(){
-
-		var hex = $(this).next();
-		hex.hide();
-		hex.next().hide();
-
 	});
 
 	$("#web #triangle-right").click(function(){

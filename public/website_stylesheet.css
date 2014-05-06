@@ -43,7 +43,7 @@
 	top: 50px;
 	left:0px;
 	height:28px;
-	width:538px;
+	width:537px;
 	background-color:rgb(0,0,0);
 }
 
@@ -166,7 +166,6 @@
 /*Side-Droppable Boxes*/
 
 #web #allPalettes{
-	height: 400px;
 	left:1070px;
 	top: 157px;
 }
