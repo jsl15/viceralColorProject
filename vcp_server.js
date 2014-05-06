@@ -214,19 +214,21 @@ function generatePalettes(clientID, num_sets, callback){
 
 	for (var set=1; set<=num_sets; set++) {
 		
-		var palettes = Array();
 
 		// keep track of num of pictaculous requests completed for this set
 		var complete_pictaculous_requests = 0; 
 
 
-
+		//get the current set's photos
 		conn.query('SELECT id, ext FROM photos WHERE client=$1 AND setnum=$2', [clientID, set], function(error, result){
-			// now we have the photos for this set - loop through them
+				// now we have the photos for this set - loop through them
 				var num_photos_in_set = result.rows.length;
+				// keep track of num of pictaculous requests completed for this set
+				var photosFinished = 0; 
 
 				console.log('num photos in set: '+num_photos_in_set);
-
+					
+				var photoColors = Array();
 				for(var i=0; i<num_photos_in_set; i++){
 					// don't forget we need child_process.exec as exec
 					php_script = 'php request.php';
@@ -234,18 +236,18 @@ function generatePalettes(clientID, num_sets, callback){
 
 					//console.log(pic_fp);
 
-					// PHP SCRIPT CALL
+					// for each photo, run the php script for it
 					generate_result(php_script, pic_fp, function(result){
 						palette = $.parseJSON(result).info.colors;
 
 						console.log('Pictaculous API (php script) result: ',palette);
 
-						palettes = palettes.concat(palette);
-						complete_pictaculous_requests++;
+						photoColors = photoColors.concat(palette);
+						photosFinished++;
 						
-						if (complete_pictaculous_requests == num_photos_in_set){					
+						if (photosFinished == num_photos_in_set){					
 							// PYTHON SCRIPT CALL
-							generate_result('./palette.py', palettes, function(result){
+							generate_result('./palette.py', photoColors, function(result){
 								color_sets.push(result);
 								
 								complete_sets++;
@@ -254,6 +256,8 @@ function generatePalettes(clientID, num_sets, callback){
 
 								
 								if (complete_sets == num_sets){
+								 	console.log("completed computation");
+								 	console.log(color_sets);
 									callback(color_sets);
 									// finished! send to next page for display
 									// should be a list of lists, one for each set.

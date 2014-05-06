@@ -245,7 +245,7 @@ $(document).ready(function() {
 
 	console.log('my name = ',meta('connectionID'));
 
-	socket.on('returnPalettes', function(palettes){
+	socket.on('returnPalettes', function(palettes) {
 		console.log('website page got palettes from server!');
 		console.log(palettes);
 
