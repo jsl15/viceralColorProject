@@ -181,14 +181,13 @@
 	background-image:url('images/logo.png');
 	background-repeat:no-repeat;
 	position:relative;	
-	top:70px;
+	top:250px;
 	margin-left:auto;
 	margin-right:auto;
-/*	left:470px; */
 }
+
 #loaderImage2{
 	position:relative;
-/*	left:650px; */
 	margin-left:auto;
 	margin-right:auto;
 	width:80px;

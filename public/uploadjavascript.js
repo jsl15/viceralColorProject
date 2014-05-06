@@ -60,7 +60,7 @@ function progressBar(obj)
     this.setProgress = function(progress)
     {       
     	console.log(this.width);
-        var progressBarWidth =progress*this.width/ 100;  
+        var progressBarWidth = progress*this.width/ 100;  
         this.bar.find('div').animate({ width: progressBarWidth }, 10).html("");
     }
 }
@@ -124,7 +124,7 @@ function uploadFile(formData, status, setNumber, d) {
 		}
 	});
 function hideBar(){
-	$(".progressBar").css("display","none");
+	 $(".progressBar").css("display","none");
 }
 //	status.setAbort(req);
 }
@@ -134,6 +134,7 @@ $(document).ready(function() {
 	$("#done").click(function() {
 		$("#loading_page").show();
 		socket.emit('done');
+		window.location.href = "/website_page.html";
 	});
 
 	$('#done').click( function() {
@@ -157,7 +158,8 @@ $(document).ready(function() {
 		var li = document.createElement('li');
 		var ul = document.getElementById("imagesets");
 		li.innerHTML = "<input type='radio' name='setW' value ='"+setCounter+"' class='radio'><div class='block'><span>+ Drag Images Here</span><ul id='blockImages'></ul></div><input type='file' style='display:none;' id='inputfile'/><a href=javascript:document.getElementById('inputfile').click();><div class='browse'>Browse</div></a></input>";
-		addDragListener($(li.firstChild));
+		addDragListener($(li.firstChild).next());
+		console.log
 		ul.appendChild(li);
 
 		$(":radio[value="+setCounter+"]").click( function() {
@@ -179,13 +181,6 @@ $(document).ready(function() {
 		$("#set_numbers #1").addClass("setW");
 	});
 
-
-	// $(".browse").hover( function() {
-	// 	$(this).css("color", "white");
-	// }, function() {
-	// 	$(this).css("color", "black");
-	// });
-
 	$("#blockImages img").hover( function() {
 		$(this).next().css("display","block");
 	}, function() {
@@ -201,24 +196,7 @@ $(document).ready(function() {
 	$("#done").click(function(){
 		$("#loading_page").css("display","block");
 	});
-/*	$(".block").each(function(i, obj) {
-		 /*obj.on('dragenter', function (e) {
-			e.stopPropagation();
-			e.preventDefault();
-			$(this).css('border', '2px solid red');
-		});
-		console.log(obj);
-		/*obj.on('dragover', function (e) {
-			e.stopPropagation();
-			e.preventDefault();
-		});
-		obj.on('drop', function (e) {
-			$(this).css('border', '2px dotted blue');
-			e.preventDefault();
-			var files = e.originalEvent.dataTransfer.files;
-			console.log("got drop");
-		});
-	});*/
+
 	var obj = $(".block");
 	addDragListener(obj); 
  	$(document).on('dragenter', function(e) {
