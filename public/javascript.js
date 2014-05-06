@@ -60,7 +60,6 @@ function createSets(type){
 
 		setImages.append(newset);
 
-		console.log("SET NUM: "+j+" SET LENGTH: "+set.length);
 		for (var i=0; i<set.length; i++){
 			console.log("SET NUMBER: "+(j+1)+" IMAGE NUMBER :"+i);
 			var set_i = document.createElement("img");
@@ -415,14 +414,24 @@ $(document).ready(function() {
 		$("#mobileButton").addClass("active");
 		$("#boxes").css("top","160px");
 		$("#boxes").css("left","890px");
+		$("#mobile #setImages div").hide();
+		var active = $("#set_numbers .active").attr("id");
+		$("#mobile #setImages #set"+active).show();
+		if (active == wSetNum){
+			$("#mobile #allPalettes").show();
+		}
 	});
 	$("#websiteButton").click( function() {
+
 		$("#web").show();
 		$("#mobile").hide();
 		$("#websiteButton").addClass("active");
 		$("#mobileButton").removeClass("active");
 		$("#boxes").css("top","170px");
 		$("#boxes").css("left","1075px");
+		$("#web #setImages div").hide();
+		var active = $("#set_numbers .active").attr("id");
+		$("#web #setImages #set"+active).show();
 	})
 });
 
