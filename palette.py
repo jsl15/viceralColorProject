@@ -17,6 +17,7 @@ from colour import Color
 import sys
 from scipy.cluster.vq import whiten, kmeans2
 import numpy as np
+from random import shuffle
 
 
 def str_to_list(s):
@@ -95,7 +96,17 @@ def generate_representative_colors(palettes, k=4):
 	This function calculates a good deal of extra data that
 	is not returned, such that one can easily manipulate what
 	gets returned and experiment with different techniques.
+	
+
+	Edge case: if there are fewer than seven colors overall, 
+	just return four of them at random. It is difficult to classify
+	such a small number of colors into distinct clusters.
 	'''
+
+	if len(palettes) < 7:
+		shuffle(palettes)
+		return palettes[:4]
+
 
 	hsl = []
 	rgb = []
@@ -108,6 +119,7 @@ def generate_representative_colors(palettes, k=4):
 	rgb = np.array(rgb)
 
 	#rgb = whiten(rgb)
+
 
 	centroids, cluster_ids = kmeans2(rgb, k)
 	

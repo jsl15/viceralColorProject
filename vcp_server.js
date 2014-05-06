@@ -225,7 +225,7 @@ io.sockets.on('connection', function(socket) {
 function generatePalettes(clientID, num_sets, callback){
 	console.log('running generatePalettes on client ',clientID,' for ',num_sets,' sets');
 
-	color_sets = new Array();
+	color_sets = {};
 
 	// keep track of num of overall sets completed
 	var complete_sets = 0;
@@ -238,11 +238,13 @@ function generatePalettes(clientID, num_sets, callback){
 
 
 		//get the current set's photos
-		conn.query('SELECT id, ext FROM photos WHERE client=$1 AND setnum=$2', [clientID, set], function(error, result){
+		conn.query('SELECT id, ext, setnum FROM photos WHERE client=$1 AND setnum=$2', [clientID, set], function(error, pics){
 				// now we have the photos for this set - loop through them
-				var num_photos_in_set = result.rows.length;
+				var num_photos_in_set = pics.rows.length;
 				// keep track of num of pictaculous requests completed for this set
 				var photosFinished = 0; 
+
+
 
 				console.log('num photos in set: '+num_photos_in_set);
 					
@@ -250,7 +252,7 @@ function generatePalettes(clientID, num_sets, callback){
 				for(var i=0; i<num_photos_in_set; i++){
 					// don't forget we need child_process.exec as exec
 					php_script = 'php request.php';
-					pic_fp = './public/images/tmp/'+result.rows[i].id+result.rows[i].ext;
+					pic_fp = './public/images/tmp/'+pics.rows[i].id+pics.rows[i].ext;
 
 					//console.log(pic_fp);
 
@@ -266,8 +268,11 @@ function generatePalettes(clientID, num_sets, callback){
 						if (photosFinished == num_photos_in_set){					
 							// PYTHON SCRIPT CALL
 							generate_result('./palette.py', photoColors, function(result){
-								color_sets.push(result);
+								console.log('generated result and adding to hash for set ',pics.rows[0].setnum);
 								
+
+								color_sets[pics.rows[0].setnum] = result;
+
 								complete_sets++;
 								
 								console.log('called python script, now have # complete sets = ',complete_sets);
@@ -354,13 +359,16 @@ function getBase64Image(img) {
 app.post('/upload', function(req, res) {
 	var obj = {};
 	var setNumber = parseInt(req.body.setNum);
+	console.log(req.body.connectionID instanceof Array);
+	var id = (typeof req.body.connectionID == 'string') ? req.body.connectionID : req.body.connectionID[0];
 	//	console.log(req);
 	// console.log(req.connection.remoteAddress);
 	// console.log(req.socket.remoteAddress);
 	// console.log(req.headers['x-forwarded-for']);
-	var extensions={".png":true, ".jpg":true, ".gif":true};
-	var maxFileSize = 500000;
+	var extensions={".png":true, ".jpg":true, ".JPG":true, ".GIF":true, ".PNG":true, ".gif":true};
+	var maxFileSize = 500000000;
 	var fileName = req.files.file.name;
+	console.log(fileName);
 	var fileID = generateImageID();
 	var tmpPath = req.files.file.path;
 	var i = fileName.lastIndexOf('.');
@@ -369,7 +377,7 @@ app.post('/upload', function(req, res) {
 	var newPath = __dirname +'/public/images/tmp/' + fileID + extension;
 	var result = "";
 
-	if ((extensions[extension]) && ((req.files.file.size /1024) < maxFileSize)) {
+	if (extensions[extension]) {
 		var base64_data = new Buffer(fs.readFileSync(tmpPath)).toString('base64');
 		//console.log("moving out of the folder");
 		fs.rename(tmpPath, newPath, function (err) {
@@ -385,11 +393,12 @@ app.post('/upload', function(req, res) {
 		console.log('About to add a photo to the db');
 
 		add_photo = 'INSERT INTO photos (id, ext, setnum, client) VALUES ($1,$2,$3,$4)';
+		console.log(req.body.connectionID);
 
-		conn.query(add_photo, [fileID, extension, setNumber, req.body.connectionID], function(error, result){
+		conn.query(add_photo, [fileID, extension, setNumber, id], function(error, result){
 			console.log('error: ',error);
 			console.log('result: ',result);
-			console.log("added photo: ID ="+fileID+' extension='+extension+' set number='+setNumber+' client='+req.body.connectionID);
+			console.log("added photo: ID ="+fileID+' extension='+extension+' set number='+setNumber+' client='+id);
 			conn.query('SELECT * FROM photos', function(error, result){
 				console.log(result);
 			});
@@ -425,6 +434,7 @@ app.post('/upload', function(req, res) {
 		// });
 
 	} else {
+		console.log(extension);
 		fs.unlink(tmpPath, function(err) {
 			if (err) throw err;
 		});
