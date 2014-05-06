@@ -13,7 +13,7 @@ var fs = require('fs');
 
 //adding io 
 var server = http.createServer(app);
-var io = require('socket.io').listen(server);
+var io = require('socket.io').listen(server, {log: false});
 
 
 var ids = {}; // list of already-used IDs for photos (to prevent duplicates)
@@ -265,7 +265,7 @@ function generatePalettes(clientID, num_sets, callback){
 						
 						if (photosFinished == num_photos_in_set){					
 							// PYTHON SCRIPT CALL
-							generate_result('./palette.py', photoColors, function(result){
+							generate_result('python palette.py', photoColors, function(result){
 								color_sets.push(result);
 								
 								complete_sets++;

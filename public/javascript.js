@@ -412,6 +412,7 @@ $(document).ready(function() {
 				}
 				else {
 					$(this).css("color","darkgrey");
+					$(this).css("color","rgba(255,255,255,.5)");
 				}
 >>>>>>> FETCH_HEAD
 				changeColor($(this).attr("id"));

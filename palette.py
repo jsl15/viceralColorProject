@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 #!/usr/bin/python
+=======
+
+>>>>>>> FETCH_HEAD
 
 '''
 takes in a list of palettes; outputs a single consolidated palette.
