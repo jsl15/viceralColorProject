@@ -169,25 +169,35 @@ io.sockets.on('connection', function(socket) {
 	socket.on('delete', function (imageID) {
 		//delete the image from the database and tmp folder.
 		delete_photo = 'DELETE FROM photos WHERE id=$1';
-		conn.query(delete_photo,[imageID])
-			.on('error',console.error)
-			.on('end', function(){
-				console.log("woo deleting " + imageID);
-			});
-
-		/* TODO: delete from temp folder as well */
-
+		conn.query('SELECT ext FROM photos WHERE id=$1', [imageID], function(error, result) {
+			for (var i = 0; i < result.rows.length; i++) {
+				fs.unlinkSync("public/images/tmp/" + imageID + result.rows[i].ext);
+			}
+			conn.query(delete_photo,[imageID])
+				.on('error',console.error)
+				.on('end', function(){
+					console.log("woo deleting " + imageID);
+				});
+		});
 	});
 
 	socket.on('disconnect', function() {
 		delete allPalettes[socket.id];
-
-		deleteAll = 'DELETE FROM photos WHERE client=$1';
-		conn.query(deleteAll,[socket.id])
+		var get_photos = 'SELECT id, ext FROM photos WHERE client=$1';
+		conn.query(get_photos, [socket.id], function(error, result) {
+			if (error) console.error
+			else {
+				for (var i = 0; i < result.rows.length; i++) {
+					fs.unlinkSync("public/images/tmp/" + result.rows[i].id + result.rows[i].ext);
+				}
+			}
+			deleteAll = 'DELETE FROM photos WHERE client=$1';
+			conn.query(deleteAll,[socket.id])
 			.on('error',console.error)
 			.on('end', function(){
 				console.log('deleted all photos from client '+socket.id);
 			});
+		});
 	});
 
 });
@@ -289,8 +299,8 @@ function generate_result(scriptName, args, callback){
 	var finalresult = null;
 
 	exec(command, function(error, stdout, stderr){
-		// console.log('ERROR:',error);
-		// console.log('STDERR:',stderr);
+		 console.log('ERROR:',error);
+		 console.log('STDERR:',stderr);
 
 		result = stdout.replace('\n','');
 		result = result.split(',');
