@@ -9,6 +9,8 @@ function createList(){
 		var num = document.createElement("li");
 		num.setAttribute("id", j+1+"");
 		num.innerHTML = j+1;
+		console.log("w");
+		console.log(wSetNum);
 		if (j==wSetNum-1){
 			if (j==0){ num.setAttribute("class","active setW"); }
 			else { num.setAttribute("class","setW"); }
@@ -339,6 +341,8 @@ $(document).ready(function() {
 
 		if ($("#set_numbers #1").hasClass("setW")){
 			$("#web #allPalettes").show();
+		} else {
+			$("#web #allPalettes").hide();
 		}
 
 		changeColors("1");
