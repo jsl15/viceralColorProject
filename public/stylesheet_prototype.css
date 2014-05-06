@@ -188,6 +188,47 @@ body{
 #triangle-left:hover{
 	border-right: 15px solid rgb(227,225,225);
 }
+
+/*Hover Hex IDS */
+
+.color_id{
+	width:50px;
+	top:4px;
+	position: absolute;
+}
+#color_id1{
+	left:5px;
+}
+#color_id2{
+	left:55px;
+}
+#color_id3{
+	left:105px;
+}
+#color_id4{
+	left:155px;
+}
+
+.color_id_rgb{
+	width:100px;
+	top:35px;
+	position: absolute;
+	text-align: center;
+}
+
+#color_id1_rgb{
+	left: -25px;
+}
+#color_id2_rgb{
+	left:25px;
+}
+#color_id3_rgb{
+	left:75px;
+}
+#color_id4_rgb{
+	left:125px;
+}
+
  
 /*Draggable Colors Pallete*/
 
@@ -197,12 +238,20 @@ body{
 	left: 425px;
 	top: -4px;
 	position: relative;
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:10px;
 }
 
-#colorline{
+.setColors2{
+	position: relative;
+	height: 50px;
+	left: 130px;
+	top: 7px;
+}
+
+.colorline{
 	height: 2px;
-	width: 210px;
-	left: -10px;
+	width: 200px;
 	position: absolute;
 	background-color: gray;
 	top: 25px;
@@ -215,16 +264,20 @@ body{
 	top: 15px;
 }
 
-#color4{
-	left: 150px;
+.color1{
+	left:5px;
 }
 
-#color3{
-	left: 100px;
+.color4{
+	left: 155px;
 }
 
-#color2{
-	left: 50px;
+.color3{
+	left: 105px;
+}
+
+.color2{
+	left: 55px;
 }
 
 /*Side-Droppable Boxes*/
@@ -264,6 +317,7 @@ body{
 	line-height: 80px;
 	top:389px;
 }
+
 #colorline2{
 	height: 520px;
 	width: 4px;
@@ -274,11 +328,14 @@ body{
 }
 
 #allPalettes{
-	width: 200px;
+	width: 350px;
 	height: 500px;
-	border: 3px dashed darkgray;
 	position: absolute;
-	padding: 10px;
+	padding: 0px;
 	display: none;
 	overflow-y: auto;
+	overflow-x: hidden;
+	list-style-type: none;
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:10px;
 }

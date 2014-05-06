@@ -129,11 +129,14 @@ function hideBar(){
 //	status.setAbort(req);
 }
 
-
 $(document).ready(function() {
+
+
+
 	$("#done").click(function() {
 		$("#loading_page").show();
-		socket.emit('done');
+		socket.emit('doneLoadingPalettes');
+		
 	});
 
 	$('#done').click( function() {
@@ -142,6 +145,16 @@ $(document).ready(function() {
 
 	socket.on('connectionID', function(id) {
 		connectionID = id;
+	});
+
+	socket.on('doneGeneratingPalettes', function(){
+		$.ajax({
+			url: '/done?clientID='+connectionID,
+			success: function(data){
+				$("body").html(data);
+			}
+		});
+
 	});
 		
 	var setCounter = 1;
@@ -257,5 +270,19 @@ function addDragListener(element) {
 			sendFile(files, element, setNum);
 		});
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

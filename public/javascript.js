@@ -1,11 +1,6 @@
-
-var set1 = ["/public/images/6.png","/public/images/7.png", "/public/images/8.png"];
-var set1_colors = [[197,96,54], [0,0,0], [109,157,184], [147, 171, 138]];
-var set2 = ["/public/images/1.png","/public/images/2.png", "/public/images/3.png", "/public/images/4.png", "/public/images/5.png"];
-var set2_colors = [[214,164,0], [54,92,127], [220,158,130], [142,142,142]];
-var set3 = [];
-var set3_colors = [[0,0,0],[0,0,0],[0,0,0],[0,0,0]];
-var allsets = [[set1,set1_colors], [set2,set2_colors], [set3, set3_colors]];
+var socket = io.connect();
+var connectionID;
+var allsets = [];
 
 function createSets(){
 	for (var j=0; j<allsets.length; j++){
@@ -27,22 +22,56 @@ function createSets(){
 		if (j!=0){
 			$("#"+id).css("display","none");
 		}
+		
+		var setPalette = document.createElement("li");
+		setPalette.setAttribute("class","setColors2");
+
+		var colors = allsets[j][1];
+
+		var color1 = "rgb("+colors[0][0]+","+colors[0][1]+","+colors[0][2]+")";
+		var color2 = "rgb("+colors[1][0]+","+colors[1][1]+","+colors[1][2]+")";
+		var color3 = "rgb("+colors[2][0]+","+colors[2][1]+","+colors[2][2]+")";
+		var color4 = "rgb("+colors[3][0]+","+colors[3][1]+","+colors[3][2]+")";
+
+
+		setPalette.innerHTML = "<div class='colorline'></div> \
+				              <div class='color color1' style='background-color:"+ color1 +"'></div> \
+				              <div id='color_id1' class='color_id'></div> \
+				              <div id='color_id1_rgb' class='color_id_rgb'></div> \
+				              <div class='color color2' style='background-color:"+ color2 +"'></div> \
+				              <div id='color_id2' class='color_id'></div> \
+				              <div id='color_id2_rgb' class='color_id_rgb'></div> \
+				              <div class='color color3' style='background-color:"+ color3 +"'></div> \
+				              <div id='color_id3' class='color_id'></div> \
+				              <div id='color_id3_rgb' class='color_id_rgb'></div> \
+				              <div class='color color4' style='background-color:"+ color4 +"'></div> \
+				              <div id='color_id4' class='color_id'></div> \
+				              <div id='color_id4_rgb' class='color_id_rgb'></div>";
+
+		$("#allPalettes").append(setPalette);
+
 	}
 }
 
 function changeColors(i){
+	console.log('allsets:',allsets);
 	var colors = allsets[i-1][1];
 
-	var color1 = "rgb("+colors[0][0]+","+colors[0][1]+","+colors[0][2]+")";
+	var color1 = colors[0];
+	var color2 = colors[1];
+	var color3 = colors[2];
+	var color4 = colors[3];
+
+	//var color1 = "rgb("+colors[0][0]+","+colors[0][1]+","+colors[0][2]+")";
 	$("#color1").css("background-color",color1);
 
-	var color2 = "rgb("+colors[1][0]+","+colors[1][1]+","+colors[1][2]+")";
+	//var color2 = "rgb("+colors[1][0]+","+colors[1][1]+","+colors[1][2]+")";
 	$("#color2").css("background-color",color2);
 
-	var color3 = "rgb("+colors[2][0]+","+colors[2][1]+","+colors[2][2]+")";
+	//var color3 = "rgb("+colors[2][0]+","+colors[2][1]+","+colors[2][2]+")";
 	$("#color3").css("background-color",color3);
 
-	var color4 = "rgb("+colors[3][0]+","+colors[3][1]+","+colors[3][2]+")";
+	//var color4 = "rgb("+colors[3][0]+","+colors[3][1]+","+colors[3][2]+")";
 	$("#color4").css("background-color", color4);
 
 	$("#box_background1").css("backgroundColor",color4);
@@ -125,6 +154,16 @@ function rgb2hex(rgb) {
     }
     return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
 }
+function hex2rgb(hex) {
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? 
+        (parseInt(result[1], 16),
+        parseInt(result[2], 16),
+        parseInt(result[3], 16))
+     : null;
+}
+
+
 function changeColor(id){
 	var box = id.charAt(id.length-1);
 	var color;
@@ -204,35 +243,69 @@ function changeColor(id){
 
 $(document).ready(function() {
 
-	if ($("#set_numbers #1").hasClass("setW")){
-		$("#allPalettes").show();
-		$("#setColors").hide();
-		$("#box_background1").css("backgroundColor","lightgray");
-		$("#box_background2").css("backgroundColor","darkgray");
-		$("#box_text3").css("backgroundColor","black");
-		$("#box_accent4").css("backgroundColor","gray");
-		for (var i=1; i<5; i++){			
-			changeColor(""+i);
+	console.log('my name = ',meta('connectionID'));
+
+	socket.on('returnPalettes', function(palettes){
+		console.log('website page got palettes from server!');
+		console.log(palettes);
+
+		for (var pal=0; pal<palettes.length; pal++){
+			var set = [];
+			var colors = palettes[pal];
+
+			allsets.push([set,colors]);
 		}
 
-	}
-	else {
-		changeColors("1");
-	}
 
-	
-	var drag_color = $("#color2").css("backgroundColor");
-	var drag_box = $("#color2");
-	var box = $("#box_text3");
-	
-	$("#drop_down_img").slideDown("slow",function(){
-		$("#drop_down_text").fadeIn("slow");
-		if (!($("#set_numbers #1").hasClass("setW"))){
-			$("#setColors").fadeIn("slow");
+		if ($("#set_numbers #1").hasClass("setW")){
+			$("#allPalettes").show();
+			$("#setColors").hide();
+			$("#box_background1").css("backgroundColor","lightgray");
+			$("#box_background2").css("backgroundColor","darkgray");
+			$("#box_text3").css("backgroundColor","black");
+			$("#box_accent4").css("backgroundColor","gray");
+			for (var i=1; i<5; i++){			
+				changeColor(""+i);
+			}
+
 		}
+		else {
+			changeColors("1");
+		}
+
+
+		var drag_color = $("#color2").css("backgroundColor");
+		var drag_box = $("#color2");
+		var box = $("#box_text3");
+		
+		$("#drop_down_img").slideDown("slow",function(){
+			$("#drop_down_text").fadeIn("slow");
+			if (!($("#set_numbers #1").hasClass("setW"))){
+				$("#setColors").fadeIn("slow");
+			}
+		});
+
+		createSets();
+
+
 	});
+	
 
-	createSets();
+	// first thing to actually happen
+	socket.emit('getPalettes', meta('connectionID'));
+
+
+
+	// var set1 = ["/public/images/6.png","/public/images/7.png", "/public/images/8.png"];
+	// var set1_colors = [[197,96,54], [0,0,0], [109,157,184], [147, 171, 138]];
+	// var set2 = ["/public/images/1.png","/public/images/2.png", "/public/images/3.png", "/public/images/4.png", "/public/images/5.png"];
+	// var set2_colors = [[214,164,0], [54,92,127], [220,158,130], [142,142,142]];
+	// var set3 = [];
+	// var set3_colors = [[0,0,0],[0,0,0],[0,0,0],[0,0,0]];
+	
+	// allsets = [[set1,set1_colors], [set2,set2_colors], [set3, set3_colors]];
+
+	
 	
 	$(".color").draggable( {			  
 	  revert : true, 
@@ -305,22 +378,26 @@ $(document).ready(function() {
 
 	
 	$(".color").hover(function() {
-		var color = $(this).css("backgroundColor");
+		var color = $(this).css("background-color");
 		var colorhex = rgb2hex(color);
 
-		var id = $(this).attr("id");
-		console.log(id[5]);
+		var hex = $(this).next();
+		var rgb = hex.next();
 
-		$("#color_id"+id[5]).append("<div id='colors'></div>"); 
-		$("#color_id"+id[5]+"_rgb").append("<div id='colors_rgb'></div>"); 
-		colors.innerHTML += colorhex;
-		colors_rgb.innerHTML += color;
-		$("#colors").css("color",color);
-		$("#colors_rgb").css("color",color);
-		},
-		function(){
-	 	 	colors.remove();
-			colors_rgb.remove();
+		hex.show();
+		rgb.show();
+
+		hex.html(colorhex);
+		rgb.html(color);
+		hex.css("color",color);
+		rgb.css("color",color);
+
+		}, function(){
+
+		var hex = $(this).next();
+		hex.hide();
+		hex.next().hide();
+
 	});
 
 	$("#triangle-right").click(function(){
@@ -345,3 +422,17 @@ $(document).ready(function() {
 		}
 	});
 });
+
+
+
+/* DEALING WITH CONFIGURATION VARIABLES */
+function meta(name){
+	var tag = document.querySelector('meta[name='+name+']');
+	if (tag != null){
+		return tag.content;
+	}
+	return '';
+}
+
+
+

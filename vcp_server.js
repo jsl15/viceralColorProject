@@ -42,7 +42,12 @@ app.use('/public', express.static('public'));
 
 // set up the database
 conn.query('DROP TABLE photos'); // maybe should do when starting up
+conn.query('DROP TABLE palettes');
 conn.query('CREATE TABLE photos (id TEXT, ext TEXT, setnum TEXT, client TEXT)');
+conn.query('CREATE TABLE palettes (color TEXT, setnum TEXT, client TEXT)');
+
+var allPalettes = {};
+
 
 
 
@@ -76,9 +81,63 @@ app.get('/mobile.html', function(request, response) {
 });
 
 
+app.get('/done', function(req, res){
+	clientID = req.query.clientID;
+	res.render('website_page.html', {'connectionID': clientID});
+});
+
+// app.get('/done', function(request, res) {
+// 	if(request.url === '/favicon.ico') {
+// 		return;
+// 	}
+
+// 	var clientID = request.query.client;
+
+// 	conn.query('SELECT MAX(setnum) AS numsets FROM photos WHERE client=$1', [clientID], function(error, result){
+// 		num_sets = result.rows[0].numsets;
+
+// 		generatePalettes(clientID, num_sets, function(r){
+// 			console.log('FINAL PALETTE result: ',r);
+
+// 			var addPalette = 'INSERT INTO palettes (color, setnum, client) VALUES ($1,$2,$3)';
+// 			var numColorsTotal = 4*r.length; // bc each palette has 4 colors
+// 			var numColorsAdded = 0;
+
+// 			for (var i=0; i<r.length; i++){
+// 				for (var j=0; j<r[i].length; j++){
+// 					conn.query(addPalette, [r[i][j], i+1, clientID], function(error, result){
+// 						numColorsAdded++;
+// 						console.log('added palette color to db: ',numColorsAdded);
+// 						if(numColorsAdded == numColorsTotal){
+// 							// maybe need to pass in the client ID
+// 							console.log('finished adding palette to db');
+//							res.redirect('/website_page.html');
+// 							console.log('redirected page');
+// 						}
+// 					});
+// 				}
+// 			}
+
+			
+// 			//socket.emit('palettes', result); // DONE, send result to the next page for display
+// 			//response.render('website_page.html', {});
+
+// 			//response.render('room.html', {'roomName': room})
+
+// 		});	
+// 	});
+
+
+// });
+
+
+
 io.sockets.on('connection', function(socket) {
 	console.log('in server: connected' + socket.id);
+	
 	socket.emit('connectionID', socket.id);
+	
+
 	socket.on('upload', function(fd, status) {
 	
 		console.log('in server: upload');
@@ -86,18 +145,25 @@ io.sockets.on('connection', function(socket) {
 	});
 
 
-	socket.on('done', function(){
+	socket.on('doneLoadingPalettes', function(){
 		conn.query('SELECT MAX(setnum) AS numsets FROM photos WHERE client=$1', [socket.id], function(error, result){
 			num_sets = result.rows[0].numsets;
 
 			generatePalettes(socket.id, num_sets, function(result){
 				console.log('FINAL PALETTE result: ',result);
-				// DONE, send result to the next page for display
+				
+				allPalettes[socket.id] = result;
+				socket.emit('doneGeneratingPalettes'); // DONE, send result to the next page for display
+
 			});	
 		});
 		
 	});
 
+
+	socket.on('getPalettes', function(clientID){
+		socket.emit('returnPalettes', allPalettes[clientID]);
+	});
 
 
 	socket.on('delete', function (imageID) {
@@ -109,14 +175,13 @@ io.sockets.on('connection', function(socket) {
 				console.log("woo deleting " + imageID);
 			});
 
-		
 		/* TODO: delete from temp folder as well */
 
 	});
 
 	socket.on('disconnect', function() {
-		delete_all = 'DELETE FROM photos WHERE client=$1';
-		conn.query(delete_all,[socket.id])
+		deleteAll = 'DELETE FROM photos WHERE client=$1';
+		conn.query(deleteAll,[socket.id])
 			.on('error',console.error)
 			.on('end', function(){
 				console.log('deleted all photos from client '+socket.id);
