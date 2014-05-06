@@ -1,4 +1,4 @@
-#!/Users/minashakarshy/anaconda/bin/python
+#!/usr/bin/python
 
 '''
 takes in a list of palettes; outputs a single consolidated palette.
