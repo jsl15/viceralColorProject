@@ -42,7 +42,12 @@ app.use('/public', express.static('public'));
 
 // set up the database
 conn.query('DROP TABLE photos'); // maybe should do when starting up
-conn.query('CREATE TABLE photos (id TEXT, ext TEXT, setnum TEXT, client TEXT PRIMARY KEY)');
+//conn.query('DROP TABLE palettes');
+conn.query('CREATE TABLE photos (id TEXT, ext TEXT, setnum TEXT, client TEXT)');
+//conn.query('CREATE TABLE palettes (color TEXT, setnum TEXT, client TEXT)');
+
+var allPalettes = {};
+
 
 
 
@@ -76,9 +81,63 @@ app.get('/mobile.html', function(request, response) {
 });
 
 
+app.get('/done', function(req, res){
+	clientID = req.query.clientID;
+	res.render('website_page.html', {'connectionID': clientID});
+});
+
+// app.get('/done', function(request, res) {
+// 	if(request.url === '/favicon.ico') {
+// 		return;
+// 	}
+
+// 	var clientID = request.query.client;
+
+// 	conn.query('SELECT MAX(setnum) AS numsets FROM photos WHERE client=$1', [clientID], function(error, result){
+// 		num_sets = result.rows[0].numsets;
+
+// 		generatePalettes(clientID, num_sets, function(r){
+// 			console.log('FINAL PALETTE result: ',r);
+
+// 			var addPalette = 'INSERT INTO palettes (color, setnum, client) VALUES ($1,$2,$3)';
+// 			var numColorsTotal = 4*r.length; // bc each palette has 4 colors
+// 			var numColorsAdded = 0;
+
+// 			for (var i=0; i<r.length; i++){
+// 				for (var j=0; j<r[i].length; j++){
+// 					conn.query(addPalette, [r[i][j], i+1, clientID], function(error, result){
+// 						numColorsAdded++;
+// 						console.log('added palette color to db: ',numColorsAdded);
+// 						if(numColorsAdded == numColorsTotal){
+// 							// maybe need to pass in the client ID
+// 							console.log('finished adding palette to db');
+//							res.redirect('/website_page.html');
+// 							console.log('redirected page');
+// 						}
+// 					});
+// 				}
+// 			}
+
+			
+// 			//socket.emit('palettes', result); // DONE, send result to the next page for display
+// 			//response.render('website_page.html', {});
+
+// 			//response.render('room.html', {'roomName': room})
+
+// 		});	
+// 	});
+
+
+// });
+
+
+
 io.sockets.on('connection', function(socket) {
 	console.log('in server: connected' + socket.id);
+	
 	socket.emit('connectionID', socket.id);
+	
+
 	socket.on('upload', function(fd, status) {
 	
 		console.log('in server: upload');
@@ -86,18 +145,25 @@ io.sockets.on('connection', function(socket) {
 	});
 
 
-	socket.on('done', function(){
+	socket.on('doneLoadingPalettes', function(){
 		conn.query('SELECT MAX(setnum) AS numsets FROM photos WHERE client=$1', [socket.id], function(error, result){
 			num_sets = result.rows[0].numsets;
 
 			generatePalettes(socket.id, num_sets, function(result){
 				console.log('FINAL PALETTE result: ',result);
-				// DONE, send result to the next page for display
+				
+				allPalettes[socket.id] = result;
+				socket.emit('doneGeneratingPalettes'); // DONE, send result to the next page for display
+
 			});	
 		});
 		
 	});
 
+
+	socket.on('getPalettes', function(clientID){
+		socket.emit('returnPalettes', allPalettes[clientID]);
+	});
 
 
 	socket.on('delete', function (imageID) {
@@ -109,14 +175,15 @@ io.sockets.on('connection', function(socket) {
 				console.log("woo deleting " + imageID);
 			});
 
-		
 		/* TODO: delete from temp folder as well */
 
 	});
 
 	socket.on('disconnect', function() {
-		delete_all = 'DELETE FROM photos WHERE client=$1';
-		conn.query(delete_all,[socket.id])
+		delete allPalettes[socket.id];
+
+		deleteAll = 'DELETE FROM photos WHERE client=$1';
+		conn.query(deleteAll,[socket.id])
 			.on('error',console.error)
 			.on('end', function(){
 				console.log('deleted all photos from client '+socket.id);
@@ -161,7 +228,7 @@ function generatePalettes(clientID, num_sets, callback){
 					generate_result(php_script, pic_fp, function(result){
 						palette = $.parseJSON(result).info.colors;
 
-						console.log(palette);
+						console.log('Pictaculous API (php script) result: ',palette);
 
 						palettes = palettes.concat(palette);
 						complete_pictaculous_requests++;
@@ -172,6 +239,10 @@ function generatePalettes(clientID, num_sets, callback){
 								color_sets.push(result);
 								
 								complete_sets++;
+								
+								console.log('called python script, now have # complete sets = ',complete_sets);
+
+								
 								if (complete_sets == num_sets){
 									callback(color_sets);
 									// finished! send to next page for display
@@ -218,8 +289,8 @@ function generate_result(scriptName, args, callback){
 	var finalresult = null;
 
 	exec(command, function(error, stdout, stderr){
-		console.log('ERROR:',error);
-		console.log('STDERR:',stderr);
+		// console.log('ERROR:',error);
+		// console.log('STDERR:',stderr);
 
 		result = stdout.replace('\n','');
 		result = result.split(',');
@@ -230,10 +301,6 @@ function generate_result(scriptName, args, callback){
 	});
 
 }
-
-
-
-
 
 
 
@@ -272,7 +339,7 @@ app.post('/upload', function(req, res) {
 
 	if ((extensions[extension]) && ((req.files.file.size /1024) < maxFileSize)) {
 		var base64_data = new Buffer(fs.readFileSync(tmpPath)).toString('base64');
-		console.log("moving out of the folder");
+		//console.log("moving out of the folder");
 		fs.rename(tmpPath, newPath, function (err) {
 			if (err) 
 				throw err;
@@ -283,12 +350,17 @@ app.post('/upload', function(req, res) {
 		});
 		result = fileID;
 
+		console.log('About to add a photo to the db');
+
 		add_photo = 'INSERT INTO photos (id, ext, setnum, client) VALUES ($1,$2,$3,$4)';
 
 		conn.query(add_photo, [fileID, extension, setNumber, req.body.connectionID], function(error, result){
-			console.log(error);
-			console.log(result);
-			console.log("added photo " + fileID+' extension '+extension+' set number '+setNumber + ' client = '+req.body.connectionID);
+			console.log('error: ',error);
+			console.log('result: ',result);
+			console.log("added photo: ID ="+fileID+' extension='+extension+' set number='+setNumber+' client='+req.body.connectionID);
+			conn.query('SELECT * FROM photos', function(error, result){
+				console.log(result);
+			});
 		});
 			// .on('error',console.error)
 			// .on('end', function(){
