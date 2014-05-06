@@ -132,6 +132,15 @@ function hideBar(){
 //	status.setAbort(req);
 }
 
+function handleFileSelect(e) {
+	var files = e.target.files;
+	console.log("got a new file");
+	var setNum = $(this).parent().index() + 1;
+	console.log(setNum);
+	sendFile(files, $(this).parent().children().eq(1), setNum);
+}
+
+
 $(document).ready(function() {
 
 
@@ -174,7 +183,8 @@ $(document).ready(function() {
 		var ul = document.getElementById("imagesets");
 		li.innerHTML = "<input type='radio' name='setW' value ='"+setCounter+"' class='radio'><div class='block'><span>+ Drag Images Here</span><ul id='blockImages'></ul></div><input type='file' style='display:none;' id='inputfile'/><a href=javascript:document.getElementById('inputfile').click();><div class='browse'>Browse</div></a></input>";
 		addDragListener($(li.firstChild).next());
-		console.log
+		$(li).find("#inputfile").change(handleFileSelect);
+
 		ul.appendChild(li);
 
 		$(":radio[value="+setCounter+"]").click( function() {
@@ -201,6 +211,8 @@ $(document).ready(function() {
 	}, function() {
 		$(this).next().css("display","none");
 	});
+	
+	$("#inputfile").change(handleFileSelect);
 
 	$("#blockImages .hover").hover( function() {
 		$(this).css("display","block");

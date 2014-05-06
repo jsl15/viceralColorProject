@@ -13,7 +13,7 @@ var fs = require('fs');
 
 //adding io 
 var server = http.createServer(app);
-var io = require('socket.io').listen(server);
+var io = require('socket.io').listen(server, {log: false});
 
 
 var ids = {}; // list of already-used IDs for photos (to prevent duplicates)
