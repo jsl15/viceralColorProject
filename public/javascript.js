@@ -95,7 +95,7 @@ function createSets(type){
 
 		var colors = allsets[j][1];
 
-		setPalette.innerHTML = "<div class='colorline'></div> \
+		setPalette.innerHTML = "<div class='colorline' style='width: 200px'></div> \
 				              <div class='color color1' style='background-color:"+ colors[0] +"'></div> \
 				              <div id='color_id1' class='color_id'></div> \
 				              <div id='color_id1_rgb' class='color_id_rgb'></div> \
@@ -108,29 +108,6 @@ function createSets(type){
 				              <div class='color color4' style='background-color:"+ colors[3] +"'></div> \
 				              <div id='color_id4' class='color_id'></div> \
 				              <div id='color_id4_rgb' class='color_id_rgb'></div>";
-
-		$(".color").hover(function() {
-			var color = $(this).css("background-color");
-			var colorhex = rgb2hex(color);
-
-			var hex = $(this).next();
-			var rgb = hex.next();
-
-			hex.show();
-			rgb.show();
-
-			hex.html(colorhex);
-			rgb.html(color);
-			hex.css("color",color);
-			rgb.css("color",color);
-
-			}, function(){
-
-			var hex = $(this).next();
-			hex.hide();
-			hex.next().hide();
-
-		});
 
 		if (type == "web") { $("#web #allPalettes").append(setPalette); }
 		else { $("#mobile #allPalettes").append(setPalette); }
@@ -323,8 +300,7 @@ function changeColor(id){
 $(document).ready(function() {
 
 	socket.on('returnPalettes', function(palettes, wSet, setPhotos) {
-		// console.log('website page got palettes from server!');
-		// console.log(palettes);
+
 		wSetNum = wSet;
 
 		for (var pal=0; pal<palettes.length; pal++){
@@ -369,6 +345,29 @@ $(document).ready(function() {
 					$(this).css("backgroundColor",drag_color);
 					changeColor($(this).attr("id"));
 				} 
+			});
+
+			$(".color").hover(function() {
+				var color = $(this).css("background-color");
+				var colorhex = rgb2hex(color);
+
+				var hex = $(this).next();
+				var rgb = hex.next();
+
+				hex.show();
+				rgb.show();
+
+				hex.html(colorhex);
+				rgb.html(color);
+				hex.css("color",color);
+				rgb.css("color",color);
+
+				}, function(){
+
+				var hex = $(this).next();
+				hex.hide();
+				hex.next().hide();
+
 			});
 		},800);
 	});
