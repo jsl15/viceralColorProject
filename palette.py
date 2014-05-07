@@ -1,4 +1,4 @@
-#!/Users/aaronbehr/anaconda/bin/python
+#!/bin/python
 
 
 '''

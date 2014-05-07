@@ -1,0 +1,37 @@
+Visceral Color Project
+
+This project is a website that, lets users upload sets of images and choose
+a focus set to compare palettes to. Then the server will generate a 4-color 
+palette for each set and display these palettes in a website and mobile view.
+Users can also interact with the display by dragging and dropping the colors
+to change the colors of different elements in the display.
+
+File uploading is done by sending an ajax POST request to the server which
+will then give the image a unique identifier and move it into the 
+public/images/tmp folder. Then the UID is stored in a sqlite3 database.
+
+After images are uploaded, the program sends a POST request to the
+pictaculous api at http://pictaculous.com/api/1.0/ which will
+return the 6 main colors each picture. See palette.py for more
+information about the color choosing algorithm applied after.
+
+How to run/setup
+================
+
+If given errors with palette generation:
+
+The python executable may need to be modified to have the path to your
+python. It is default set to /bin/python. To find where your python is 
+located, run "which python" in the terminal. Then replace the first 
+line of palette.py with "#!" and then the path.
+
+For this project we also need to install the python colour
+module. If you have pip installed, do this by running "pip install colour"
+in the terminal.
+
+Also, make sure that the executable has the 'x' property. To change this
+run "chmod +x palette.py"
+
+To run the server, run "node vcp_server.js" in the terminal and then
+open a browser at localhost:8080 to see the website.
+
