@@ -15,6 +15,10 @@ pictaculous api at http://pictaculous.com/api/1.0/ which will
 return the 6 main colors each picture. See palette.py for more
 information about the color choosing algorithm applied after.
 
+The server may get a warning that one of the clusters is empty, do not
+worry about these messages. This may occur when there are too few clusters
+but is handled in the server.
+
 How to run/setup
 ================
 
