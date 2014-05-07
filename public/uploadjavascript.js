@@ -80,11 +80,6 @@ function sendFile(files, obj, setNum) {
            	d  = addToSet(this.result, setNum, status);
 			uploadFile(fd, status, currFile, setNum, d);
         }
-<<<<<<< HEAD
-
-
-=======
->>>>>>> FETCH_HEAD
 	}
 }
 
