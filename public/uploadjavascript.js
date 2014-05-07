@@ -84,12 +84,6 @@ function sendFile(files, obj, setNum) {
 			console.log("about to send");
 			uploadFile(fd, status, currFile, setNum, d);
         }
-
-	/*	//upload a single file
-		console.log('emitting');
-		socket.emit('upload', fd, status);
-		//problems with the progress bar
-		uploadFile(fd, status);*/
 	}
 }
 

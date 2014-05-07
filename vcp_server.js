@@ -25,10 +25,7 @@ app.use(express.methodOverride());
 var anyDB = require('any-db');
 var conn = anyDB.createConnection('sqlite3://vcp.db');
 
-
-var exec = require('child_process').exec; 
-// remember child_process is included in node.js, no need to npm install
-
+var exec = require('child_process').exec; // child_process is included in node.js, no need to npm install
 
 
 //rendering html 
@@ -41,10 +38,8 @@ app.use('/public', express.static('public'));
 
 
 // set up the database
-conn.query('DROP TABLE photos'); // maybe should do when starting up
-//conn.query('DROP TABLE palettes');
+conn.query('DROP TABLE photos'); // should usually do when starting up
 conn.query('CREATE TABLE photos (id TEXT, ext TEXT, setnum TEXT, client TEXT)');
-//conn.query('CREATE TABLE palettes (color TEXT, setnum TEXT, client TEXT)');
 
 var allPalettes = {};
 var wSets = {};
@@ -53,97 +48,73 @@ var wSets = {};
 
 
 app.get('/website_page.html', function(request, response) {
-	//this is the function that is called when the user calls website_page.html
 	response.render('website_page.html', '');
 });
 
 app.get('/', function(request, response) {
-	//this is the function that is called when the user calls imageselections.html
 	response.render('imageselection.html', '');
 });
 
-//I was wondering which methods that I should interact with the client
 app.get('/imageselection.html', function(request, response) {
-	//this is the function that is called when the user calls imageselections.html
-	request.on('close', function() {
-		console.log("closed");
-	});
-	request.on('end', function() {
-		console.log("ended");
-	});
 	response.render('imageselection.html', '');
-});
-
-app.get('/mobile.html', function(request, response) {
-	request.on('close', function() {
-		console.log("closed");
-	});
-	response.render('mobile.html', '');
 });
 
 
 app.get('/done', function(req, res){
+	/* client sends this request once it has received notification that 
+	the server is done generating palettes. Server redirects page and gives
+	the html the old client ID so it knows how to find the palettes in the server */
 	clientID = req.query.clientID;
 	res.render('website_page.html', {'connectionID': clientID});
 });
 
-// app.get('/done', function(request, res) {
-// 	if(request.url === '/favicon.ico') {
-// 		return;
-// 	}
 
-// 	var clientID = request.query.client;
+app.post('/upload', function(req, res) {
+	var obj = {};
+	var setNumber = parseInt(req.body.setNum);
+	var id = (typeof req.body.connectionID == 'string') ? req.body.connectionID : req.body.connectionID[0];
 
-// 	conn.query('SELECT MAX(setnum) AS numsets FROM photos WHERE client=$1', [clientID], function(error, result){
-// 		num_sets = result.rows[0].numsets;
+	var extensions={".png":true, ".jpg":true, ".jpeg":true, ".JPG":true, ".GIF":true, ".PNG":true, ".gif":true};
+	var maxFileSize = 500000000;
+	var fileName = req.files.file.name;
+	var fileID = generateImageID();
+	var tmpPath = req.files.file.path;
+	var i = fileName.lastIndexOf('.');
+	var extension = (i < 0) ? '' : fileName.substr(i);
 
-// 		generatePalettes(clientID, num_sets, function(r){
-// 			console.log('FINAL PALETTE result: ',r);
+	var newPath = __dirname +'/public/images/tmp/' + fileID + extension;
+	var result = "";
 
-// 			var addPalette = 'INSERT INTO palettes (color, setnum, client) VALUES ($1,$2,$3)';
-// 			var numColorsTotal = 4*r.length; // bc each palette has 4 colors
-// 			var numColorsAdded = 0;
+	if (extensions[extension]) {
+		var base64_data = new Buffer(fs.readFileSync(tmpPath)).toString('base64');
+		fs.rename(tmpPath, newPath, function (err) {
+			if (err) 
+				throw err;
+			fs.unlink(tmpPath, function() {
+				if (err)
+					throw err;
+			});
+		});
+		result = fileID;
 
-// 			for (var i=0; i<r.length; i++){
-// 				for (var j=0; j<r[i].length; j++){
-// 					conn.query(addPalette, [r[i][j], i+1, clientID], function(error, result){
-// 						numColorsAdded++;
-// 						console.log('added palette color to db: ',numColorsAdded);
-// 						if(numColorsAdded == numColorsTotal){
-// 							// maybe need to pass in the client ID
-// 							console.log('finished adding palette to db');
-//							res.redirect('/website_page.html');
-// 							console.log('redirected page');
-// 						}
-// 					});
-// 				}
-// 			}
+		add_photo = 'INSERT INTO photos (id, ext, setnum, client) VALUES ($1,$2,$3,$4)';
+		conn.query(add_photo, [fileID, extension, setNumber, id]);
 
-			
-// 			//socket.emit('palettes', result); // DONE, send result to the next page for display
-// 			//response.render('website_page.html', {});
+	} else {
+		fs.unlink(tmpPath, function(err) {
+			if (err) throw err;
+		});
+		result = "File upload failed";
+	}
+	res.end(result);
+});
 
-// 			//response.render('room.html', {'roomName': room})
-
-// 		});	
-// 	});
-
-
-// });
 
 
 
 io.sockets.on('connection', function(socket) {
-	console.log('in server: connected' + socket.id);
-	
-	socket.emit('connectionID', socket.id);
-	
 
-	socket.on('upload', function(fd, status) {
-	
-		console.log('in server: upload');
-	
-	});
+	socket.emit('connectionID', socket.id);
 
 
 	socket.on('doneLoadingPalettes', function(wSetNum){
@@ -153,17 +124,15 @@ io.sockets.on('connection', function(socket) {
 			num_sets = result.rows[0].numsets;
 
 			generatePalettes(socket.id, num_sets, function(result){
-				console.log('FINAL PALETTE result: ',result);
-				
 				allPalettes[socket.id] = result;
 				socket.emit('doneGeneratingPalettes'); // DONE, send result to the next page for display
-
 			});	
 		});
 		
 	});
 
 
+	/* Client requesting palettes that the server has already generated. Return the palettes */
 	socket.on('getPalettes', function(clientID){
 		conn.query('SELECT id, ext, setnum FROM photos WHERE client=$1', [clientID], function(error, result) {
 			if (error) {
@@ -181,11 +150,8 @@ io.sockets.on('connection', function(socket) {
 				var palettes = new Array();
 				var keys = Object.keys(allPalettes[clientID]);
 				for (var i = 0; i < keys.length; i ++) {
-					console.log(keys[i]);
 					palettes[parseInt(keys[i])-1] = allPalettes[clientID][parseInt(keys[i])];
 				}
-				console.log(allPalettes[clientID]);
-				console.log(palettes);
 				socket.emit('returnPalettes', palettes, wSets[clientID], photos);
 			}
 		});
@@ -201,11 +167,10 @@ io.sockets.on('connection', function(socket) {
 			}
 			conn.query(delete_photo,[imageID])
 				.on('error',console.error)
-				.on('end', function(){
-					console.log("woo deleting " + imageID);
-				});
+				.on('end', function(){});
 		});
 	});
+
 
 	socket.on('disconnect', function() {
 		delete allPalettes[socket.id];
@@ -220,9 +185,7 @@ io.sockets.on('connection', function(socket) {
 			deleteAll = 'DELETE FROM photos WHERE client=$1';
 			conn.query(deleteAll,[socket.id])
 			.on('error',console.error)
-			.on('end', function(){
-				console.log('deleted all photos from client '+socket.id);
-			});
+			.on('end', function(){});
 		});
 	});
 
@@ -231,68 +194,36 @@ io.sockets.on('connection', function(socket) {
 
 
 function generatePalettes(clientID, num_sets, callback){
-	console.log('running generatePalettes on client ',clientID,' for ',num_sets,' sets');
+	console.log('Generating palettes for client',clientID,'for',num_sets,'sets');
 
 	color_sets = {};
-
-	// keep track of num of overall sets completed
-	var complete_sets = 0;
+	var complete_sets = 0; // keep track of num of overall sets completed
 
 	for (var set=1; set<=num_sets; set++) {
-		
-
-		// keep track of num of pictaculous requests completed for this set
-		var complete_pictaculous_requests = 0; 
-
-
 		//get the current set's photos
 		conn.query('SELECT id, ext, setnum FROM photos WHERE client=$1 AND setnum=$2', [clientID, set], function(error, pics){
-				// now we have the photos for this set - loop through them
-				var num_photos_in_set = pics.rows.length;
-				// keep track of num of pictaculous requests completed for this set
-				var photosFinished = 0; 
-
-
-
-				console.log('num photos in set: '+num_photos_in_set);
+				var num_photos_in_set = pics.rows.length;				
+				var photosFinished = 0; // keep track of num of pictaculous requests completed for this set
 					
 				var photoColors = Array();
 				for(var i=0; i<num_photos_in_set; i++){
-					// don't forget we need child_process.exec as exec
 					php_script = 'php request.php';
 					pic_fp = './public/images/tmp/'+pics.rows[i].id+pics.rows[i].ext;
 
-					//console.log(pic_fp);
-
-					// for each photo, run the php script for it
-					generate_result(php_script, pic_fp, function(result){
+					// PHP SCRIPT CALL for each photo
+					generateResult(php_script, pic_fp, function(result){
 						palette = $.parseJSON(result).info.colors;
-
-						console.log('Pictaculous API (php script) result: ',palette);
-
 						photoColors = photoColors.concat(palette);
 						photosFinished++;
 						
 						if (photosFinished == num_photos_in_set){					
-							// PYTHON SCRIPT CALL
-							generate_result('./palette.py', photoColors, function(result){
-								console.log('generated result and adding to hash for set ',pics.rows[0].setnum);
-								
-
+							// PYTHON SCRIPT CALL for each set
+							generateResult('./palette.py', photoColors, function(result){
 								color_sets[pics.rows[0].setnum] = result;
-
 								complete_sets++;
 								
-								console.log('called python script, now have # complete sets = ',complete_sets);
-
-								
 								if (complete_sets == num_sets){
-								 	console.log("completed computation");
-								 	console.log(color_sets);
-									callback(color_sets);
-									// finished! send to next page for display
-									// should be a list of lists, one for each set.
-									
+									callback(color_sets); // finished! send to next page for display
 								}
 							});
 						}
@@ -306,8 +237,7 @@ function generatePalettes(clientID, num_sets, callback){
 
 
 
-
-function generate_sample_palettes(){
+function generateSamplePalettes(){
 	pal1 = ['#758A9F','#3D4D58','#E2D4B2']; // wolf pic
 	pal2 = ['#BC9A0C','#948D56','#A1C5FE','#8C7909','#F1F7FF']; // green field blue sky landscape
 	pal3 = ['#703E77','#80698C','#020202']; // purple starry night sky
@@ -321,36 +251,22 @@ function generate_sample_palettes(){
 
 
 
-
-function generate_result(scriptName, args, callback){
-	/* normally you'd be calling the pictaculous thing instead
-	 * note: needs to be sent as one big list, not a list of
-	 * individual per-image lists.
-	 */
-	// remember, the script needs to be executable
-	
+/* call command line scripts and get the results */
+function generateResult(scriptName, args, callback){	
 	command = scriptName+' "'+args.toString()+'"';
 
 	var finalresult = null;
 
 	exec(command, function(error, stdout, stderr){
-		 console.log('ERROR:',error);
-		 console.log('STDERR:',stderr);
-
+		if(stderr.length > 0){
+			console.log('SCRIPT',scriptName,'ERROR:',stderr);	
+		}
 		result = stdout.replace('\n','');
 		result = result.split(',');
 
-		//imgset_palette = result;
 		callback(result);	
-
 	});
-
 }
-
-
-
-
-
 
 
 function getBase64Image(img) {
@@ -364,93 +280,8 @@ function getBase64Image(img) {
     return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
 }
 
-app.post('/upload', function(req, res) {
-	var obj = {};
-	var setNumber = parseInt(req.body.setNum);
-	console.log(req.body.connectionID instanceof Array);
-	var id = (typeof req.body.connectionID == 'string') ? req.body.connectionID : req.body.connectionID[0];
-	//	console.log(req);
-	// console.log(req.connection.remoteAddress);
-	// console.log(req.socket.remoteAddress);
-	// console.log(req.headers['x-forwarded-for']);
-	var extensions={".png":true, ".jpg":true, ".jpeg":true, ".JPG":true, ".GIF":true, ".PNG":true, ".gif":true};
-	var maxFileSize = 500000000;
-	var fileName = req.files.file.name;
-	console.log(fileName);
-	var fileID = generateImageID();
-	var tmpPath = req.files.file.path;
-	var i = fileName.lastIndexOf('.');
-	var extension = (i < 0) ? '' : fileName.substr(i);
 
-	var newPath = __dirname +'/public/images/tmp/' + fileID + extension;
-	var result = "";
 
-	if (extensions[extension]) {
-		var base64_data = new Buffer(fs.readFileSync(tmpPath)).toString('base64');
-		//console.log("moving out of the folder");
-		fs.rename(tmpPath, newPath, function (err) {
-			if (err) 
-				throw err;
-			fs.unlink(tmpPath, function() {
-				if (err)
-					throw err;
-			});
-		});
-		result = fileID;
-
-		console.log('About to add a photo to the db');
-
-		add_photo = 'INSERT INTO photos (id, ext, setnum, client) VALUES ($1,$2,$3,$4)';
-		console.log(req.body.connectionID);
-
-		conn.query(add_photo, [fileID, extension, setNumber, id], function(error, result){
-			console.log('error: ',error);
-			console.log('result: ',result);
-			console.log("added photo: ID ="+fileID+' extension='+extension+' set number='+setNumber+' client='+id);
-			conn.query('SELECT * FROM photos', function(error, result){
-				console.log(result);
-			});
-		});
-			// .on('error',console.error)
-			// .on('end', function(){
-			// 	console.log("added photo " + fileID+ ' client = '+req.body.connectionID);
-			// });
-
-		/*		var options = {
-
-			host: 'http://pictaculous.com/api/1.0/',
-			port: 80,
-			method: 'POST',
-		};
-
-		var httpreq = http.request(options, function (response) {
-			response.setEncoding('utf8');
-			response.on('data', function(stuff) {
-				console.log("body: " + stuff);
-			});
-		});
-		httpreq.write(data);*/
-		// var php = require('child_process').spawn('php', ["test.php"]);
-		// var output = "";
-		// php.stdout.on('data', function(data) { 
-		// 	var str = data.toString();
-		// 	var json = 	$.parseJSON(str);
-		// 	console.log(json.info);
-		// });
-		// php.on('close', function(code) {
-		// 	console.log('process exit code ' + code);	
-		// });
-
-	} else {
-		console.log(extension);
-		fs.unlink(tmpPath, function(err) {
-			if (err) throw err;
-		});
-		console.log("problemmmmm");
-		result = "File upload failed";
-	}
-	res.end(result);
-});
 
 function generateImageID() {
 	var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
@@ -467,6 +298,5 @@ function generateImageID() {
 }
 
 
-
 server.listen(8080);
-console.log('server running on 8080');
+console.log('-- Server running on port 8080');
