@@ -2,15 +2,16 @@ var socket = io.connect();
 var connectionID;
 var allsets = [];
 var wSetNum = 0;
-var photos = "";
 
+/*Creates lists of sets on the side nav, sets up click listener for switching between sets*/
 function createList(){
+
 	for (var j=0; j<allsets.length; j++){
+
 		var num = document.createElement("li");
 		num.setAttribute("id", j+1+"");
 		num.innerHTML = j+1;
-		console.log("w");
-		console.log(wSetNum);
+	
 		if (j==wSetNum-1){
 			if (j==0){ num.setAttribute("class","active setW"); }
 			else { num.setAttribute("class","setW"); }
@@ -18,6 +19,7 @@ function createList(){
 		else if (j==0){
 			num.setAttribute("class","active");
 		}
+
 		$("#list_numbers").append(num);
 
 		$(num).click( function() {
@@ -48,7 +50,12 @@ function createList(){
 	}
 }
 
+/*Creates sets of images to be displayed/shown based on which set number is currently active
+Type represents either creating sets for web or creating sets for mobile.
+*/
 function createSets(type){
+
+	//For each set
 	for (var j=0; j<allsets.length; j++){
 
 		var set = allsets[j][0];
@@ -57,17 +64,20 @@ function createSets(type){
 		var newset = document.createElement("div");
 		newset.setAttribute("id",id);
 		var setImages;
+
 		if (type == "web") { setImages = $("#web #setImages"); }
 		else { setImages = $("#mobile #setImages");}
 
 		setImages.append(newset);
 
+		//For each image in the set
 		for (var i=0; i<set.length; i++){
-			console.log("SET NUMBER: "+(j+1)+" IMAGE NUMBER :"+i);
+
 			var set_i = document.createElement("img");
 			set_i.setAttribute("src", "data:image/jpeg;base64,"+set[i]);
 			newset.appendChild(set_i);
 
+			//Click listener for expanding an image
 			$(set_i).click( function() {
 
 				if (!$(this).hasClass("active")){
@@ -77,7 +87,6 @@ function createSets(type){
 					if (type=="web"){ $("#web #expand").css("display","block"); }
 					else { $("#mobile #expand").css("display","block"); }
 
-					console.log($(this).css("background-color"));
 					if (type=="web"){
 						webUpsizeImage();
 					}
@@ -86,10 +95,12 @@ function createSets(type){
 			});
 		}
 
+		//Only display the first set
 		if (j!=0){
 			$("#"+id).css("display","none");
 		}
 
+		//Create a list of all the palettes to be shown on the w set.
 		var setPalette = document.createElement("li");
 		setPalette.setAttribute("class","setColors2");
 
@@ -114,6 +125,7 @@ function createSets(type){
 	}
 }
 
+//Changes the colors of the palette at the top, the drop boxes, and the inner website/phone each time the set is changed
 function changeColors(i){
 	var colors = allsets[i-1][1];
 
@@ -138,20 +150,26 @@ function changeColors(i){
 	changeColor("#box_accent4");
 }
 
+//Downsize an image when expand is clicked on
 function downsizeImage(type){
-	$("#"+type +" #setImages .active").css("width","150px");
-	$("#"+type +" #setImages .active").css("z-index","0");
-	if ($("#"+type +" #setImages .active").hasClass("web")){
-		$("#"+type +" #setImages .active").removeClass("web");
-		$("#"+type +" #setImages .active").css("margin-left", "25px");
+	var id = "#"+type +" #setImages .active";
+
+	$(id).css("width","150px");
+	$(id).css("z-index","0");
+
+	if ($(id).hasClass("web")){
+		$(id).removeClass("web");
+		$(id).css("margin-left", "25px");
 	}
 	else {
-		$("#"+type +" #setImages .active").css("max-height","90px");
+		$(id).css("max-height","90px");
 	}
-	$("#"+type +" #setImages .active").removeClass("active");
+
+	$(id).removeClass("active");
 	$("#"+type +" #expand").css("display","none");
 }
 
+//Expand an image when it is clicked on
 function webUpsizeImage(){
 	$("#web #setImages .active").css("width","190px");
 	$("#web #setImages .active").css("margin-left","0px");
@@ -164,6 +182,7 @@ function mobileUpsizeImage(){
 	$("#mobile #setImages .active").css("width","305px");
 }
 
+//These functions are called when the set of images is pulled in/out
 function mobileShrink(){
 	$("#mobile #setImages").animate({
 			left: "355px",
@@ -202,6 +221,8 @@ function webExpand(){
 	});
 }
 
+
+//Helper function for converting hex colors to rgb colors
 function rgb2hex(rgb) {
     rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
     function hex(x) {
@@ -209,21 +230,17 @@ function rgb2hex(rgb) {
     }
     return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
 }
-function hex2rgb(hex) {
-    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? 
-        (parseInt(result[1], 16),
-        parseInt(result[2], 16),
-        parseInt(result[3], 16))
-     : null;
-}
 
-
+//Changes the colors of the website and mobile app depending on which box id is passed in
+//Changes both so that switching between the two preserves changes
 function changeColor(id){
+
 	var box = id.charAt(id.length-1);
 	var color;
+
+	//primary background
 	if (box == "1"){
-		var color = $("#box_background1").css("backgroundColor");
+		color = $("#box_background1").css("backgroundColor");
 		$("#fake_web_body").css("backgroundColor",color);
 		$("#B_web").css("color",color);
 
@@ -231,8 +248,10 @@ function changeColor(id){
 		$("#innerPhone").css("backgroundColor",color);
 		$("#B").css("color",color);
 	}
+
+	//secondary background
 	else if (box == "2"){
-		var color = $("#box_background2").css("backgroundColor");
+		color = $("#box_background2").css("backgroundColor");
 		$("#inner_web").css("backgroundColor",color);
 		$("#B_web").css("backgroundColor",color);
 		$("#inner_box").css("backgroundColor",color);
@@ -241,12 +260,15 @@ function changeColor(id){
 		$("#top").css("backgroundColor",color);
 		$("#B").css("backgroundColor",color);
 	}
+
+	//text
 	else if (box == "3"){
-		var color = $("#box_text3").css("backgroundColor");
+		color = $("#box_text3").css("backgroundColor");
 		$("#fake_web_text").css("color",color);
 		$("#username_web").css("color",color);
 		$("#inner_box").css("color",color);
 		$("#web_top").css("color",color);
+
 		var split = color.split("(");
 		split = split[0]+"a("+split[1];
 	    split = split.split(")");
@@ -267,8 +289,10 @@ function changeColor(id){
 		$(".comment").css("color",color);
 		$(".points").css("color",color);
 	}
+
+	//accent
 	else {
-		var color = $("#box_accent4").css("backgroundColor");
+		color = $("#box_accent4").css("backgroundColor");
 		$("#fake_nav").css("backgroundColor",color);
 		$("#B_web").css({"border-color":color,
 							"border-weight":"2px",
@@ -313,7 +337,6 @@ $(document).ready(function() {
 		createSets("mobile");
 		createList();
 
-
 		if ($("#set_numbers #1").hasClass("setW")){
 			$("#web #allPalettes").show();
 		} else {
@@ -331,6 +354,7 @@ $(document).ready(function() {
 			$("#setColors").fadeIn("slow");
 		});
 
+		//Drag, drop, and hover listeners
 		setTimeout(function(){
 			$(".color").draggable( {			  
 			  revert : true, 
@@ -377,6 +401,7 @@ $(document).ready(function() {
 	socket.emit('getPalettes', meta('connectionID'));
 
 
+	//Click listeners for added functionality
 	$("#mobile #expand").click( function() {
 		downsizeImage("mobile");
 	});
@@ -409,16 +434,20 @@ $(document).ready(function() {
 		mobileExpand();
 	});
 
-
+	//Switching between mobile and website
 	$("#mobileButton").click( function() {
+
 		$("#web").hide();
 		$("#mobile").show();
 		$("#websiteButton").removeClass("active");
 		$("#mobileButton").addClass("active");
+
 		$("#drop_down_text").text("Drag and drop colors to make your ideal mobile app!");
+
 		$("#boxes").css("top","160px");
 		$("#boxes").css("left","890px");
 		$("#mobile #setImages div").hide();
+
 		var active = $("#set_numbers .active").attr("id");
 		$("#mobile #setImages #set"+active).show();
 		if (active == wSetNum){
@@ -426,20 +455,21 @@ $(document).ready(function() {
 		}
 	});
 	$("#websiteButton").click( function() {
-
 		$("#web").show();
 		$("#mobile").hide();
 		$("#websiteButton").addClass("active");
 		$("#mobileButton").removeClass("active");
+
 		$("#drop_down_text").text("Drag and drop colors to make your ideal website!")
+
 		$("#boxes").css("top","170px");
 		$("#boxes").css("left","1075px");
 		$("#web #setImages div").hide();
+
 		var active = $("#set_numbers .active").attr("id");
 		$("#web #setImages #set"+active).show();
 	})
 });
-
 
 
 /* DEALING WITH CONFIGURATION VARIABLES */
